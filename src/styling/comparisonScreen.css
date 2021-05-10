@@ -1,0 +1,13 @@
+.comparison-tabs-container {
+  margin: 20px;
+  width: 100%;
+  height: 90%;
+  border: 1px solid #dee2e6;
+  border-top: 0px;
+}
+.comaprison-tabs {
+  height: 100%;
+}
+.tab-content {
+  height: 100%;
+}

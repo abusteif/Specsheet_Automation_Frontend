@@ -1,0 +1,13 @@
+.individual-line {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 5px;
+}
+.individual-line-right-half {
+  font-style: italic;
+  font-weight: normal;
+}
+.individual-line-left-half {
+  font-weight: bold;
+  padding-right: 3px;
+}

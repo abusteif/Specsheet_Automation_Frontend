@@ -1,0 +1,22 @@
+.home-screen {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  border-width: medium;
+}
+.home-screen-button {
+  height: 100px;
+  width: 300px;
+  margin-bottom: 100px;
+}
+.home-screen-body {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
