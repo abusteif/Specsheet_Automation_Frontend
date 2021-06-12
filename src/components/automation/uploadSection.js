@@ -258,12 +258,28 @@ const UploadSection = ({
                 // />
               }
               <HexCodeInput
-                role="AttachRequest"
+                role="attachRequest"
                 placeholderText="Attach Request message type is not supported yet"
                 selectedRATSIM={selectedRATSIM}
-                hexData={""}
-                disabled
+                hexData={hexData.attachRequest.data}
+                setHexData={(data) => setHexData(data, "attachRequest")}
+                resetHexData={() => resetHexData("attachRequest")}
+                validateHexData={validateHexData}
+                resetValidationResult={() =>
+                  resetValidationResult("attachRequest")
+                }
+                resetSpecsheetGenerate={resetSpecsheetGenerate}
+                resetSpecsheetUpload={resetSpecsheetUpload}
+                isUploadComplete={specsheet.isUploadComplete}
+                resetIotCycleResults={resetIotCycleResults}
+                statusMessage={getHexDataStatusMessage(hexData.attachRequest)}
+                disabled={
+                  hexData.attachRequest.validateInFlight ||
+                  specsheet.isUploadStarted ||
+                  specsheet.isGenerateStarted
+                }
               />
+
               <HexCodeInput
                 role="ESMInformationRep"
                 placeholderText="ESM Information Response This message type is not supported yet"
