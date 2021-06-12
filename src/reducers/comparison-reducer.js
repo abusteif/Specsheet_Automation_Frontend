@@ -21,8 +21,14 @@ const defaultState = {
   devices: [],
   messageFields: [],
   results: {
-    mainResult: null,
-    secondaryResult: null,
+    mainResult: {
+      uecapabilityInformation: null,
+      attachRequest: null,
+    },
+    secondaryResult: {
+      uecapabilityInformation: null,
+      attachRequest: null,
+    },
     secondaryInFlight: false,
     mainError: false,
     secondaryError: false,
@@ -62,7 +68,13 @@ export const comparisonReducer = (state = defaultState, action) => {
             ...state,
             results: {
               ...state.results,
-              mainResult: { bandCombinations: [], individualIE: [] },
+              mainResult: {
+                ...state.results.mainResult,
+                uecapabilityInformation: {
+                  bandCombinations: [],
+                  individualIE: [],
+                },
+              },
             },
           };
         else {
@@ -70,7 +82,11 @@ export const comparisonReducer = (state = defaultState, action) => {
             ...state,
             results: {
               ...state.results,
-              mainResult: action.payload.result.data,
+              // mainResult: action.payload.result.data,
+              mainResult: {
+                ...state.results.mainResult,
+                uecapabilityInformation: action.payload.result.data,
+              },
             },
           };
         }
@@ -86,7 +102,14 @@ export const comparisonReducer = (state = defaultState, action) => {
             ...state,
             results: {
               ...state.results,
-              secondaryResult: { bandCombinations: [], individualIE: [] },
+              // secondaryResult: { bandCombinations: [], individualIE: [] },
+              secondaryResult: {
+                ...state.results.secondaryResult,
+                uecapabilityInformation: {
+                  bandCombinations: [],
+                  individualIE: [],
+                },
+              },
             },
           };
         else {
@@ -94,7 +117,11 @@ export const comparisonReducer = (state = defaultState, action) => {
             ...state,
             results: {
               ...state.results,
-              secondaryResult: action.payload.result.data,
+              // secondaryResult: action.payload.result.data,
+              secondaryResult: {
+                ...state.results.secondaryResult,
+                uecapabilityInformation: action.payload.result.data,
+              },
             },
           };
         }
@@ -132,9 +159,24 @@ export const comparisonReducer = (state = defaultState, action) => {
     case RESET_IOT_CYCLE_RESULTS:
       let results = state.results;
       if (action.payload.includes("main"))
-        results = { ...results, mainResult: null, mainError: null };
+        // results = { ...results, mainResult: null, mainError: null };
+        results = {
+          ...results,
+          mainResult: { ...results.mainResult, uecapabilityInformation: null },
+          mainError: null,
+        };
+
       if (action.payload.includes("secondary"))
-        results = { ...results, secondaryResult: null, secondaryError: null };
+        // results = { ...results, secondaryResult: null, secondaryError: null };
+        results = {
+          ...results,
+          secondaryResult: {
+            ...results.secondaryResult,
+            uecapabilityInformation: null,
+          },
+          mainError: null,
+        };
+
       return { ...state, results };
     case SELECT_SECONDARY_DEVICE:
       const secondaryDevice = state.devices.filter(

@@ -45,7 +45,10 @@ const ComparisonScreen = (props) => {
       props.getMainDevice();
       props.getMainRATSIM();
 
-      if (!props.comparison.results.mainResult && props.comparison.mainRATSIM)
+      if (
+        !props.comparison.results.mainResult.uecapabilityInformation &&
+        props.comparison.mainRATSIM
+      )
         props.getIotCycleResults(
           props.common.selectedDevice.name,
           props.common.selectedIotCycle.name,
