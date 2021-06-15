@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 
 import TabView from "../../theme/tabView";
 import IndividualIETab from "./individualIETab";
+import AttachRequestTab from "./attachRequestTab";
 import BandCombinationsTab from "./bandCombinationsTab";
 
 import "../../styling/comparisonScreen.css";
@@ -23,7 +24,7 @@ const ComparisonTabs = ({
   const tabs = [
     {
       name: "IndividualIE",
-      title: "Individual IE",
+      title: "UECapabilityInformation",
       content: (
         <IndividualIETab
           mainInfo={mainInfo}
@@ -33,8 +34,16 @@ const ComparisonTabs = ({
           secondaryError={secondaryError}
           secondaryRetry={secondaryRetry}
           fields={fields}
-          mainData={mainData ? mainData.individualIE : null}
-          secondaryData={secondaryData ? secondaryData.individualIE : null}
+          mainData={
+            mainData.uecapabilityInformation
+              ? mainData.uecapabilityInformation.individualIE
+              : null
+          }
+          secondaryData={
+            secondaryData.uecapabilityInformation
+              ? secondaryData.uecapabilityInformation.individualIE
+              : null
+          }
           mainRATSIM={mainRATSIM}
           secondaryRATSIM={secondaryRATSIM}
         />
@@ -45,6 +54,31 @@ const ComparisonTabs = ({
       title: "Band Combinations",
       content: (
         <BandCombinationsTab
+          mainInfo={mainInfo}
+          secondaryInfo={secondaryInfo}
+          mainError={mainError}
+          mainRetry={mainRetry}
+          secondaryError={secondaryError}
+          secondaryRetry={secondaryRetry}
+          mainData={
+            mainData.uecapabilityInformation
+              ? mainData.uecapabilityInformation.bandCombinations
+              : null
+          }
+          secondaryData={
+            secondaryData.uecapabilityInformation
+              ? secondaryData.uecapabilityInformation.bandCombinations
+              : null
+          }
+          secondaryRATSIM={secondaryRATSIM}
+        />
+      ),
+    },
+    {
+      name: "attachRequest",
+      title: "Attach Request",
+      content: (
+        <AttachRequestTab
           mainInfo={mainInfo}
           secondaryInfo={secondaryInfo}
           mainError={mainError}

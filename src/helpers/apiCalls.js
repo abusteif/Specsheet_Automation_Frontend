@@ -36,6 +36,9 @@ export const checkIfAlreadyExecuted = async (
   callBackError
 ) => {
   try {
+    if (messageType === "attachRequest") {
+      return;
+    }
     const result = await backend("executionStatus", {
       params: {
         device,

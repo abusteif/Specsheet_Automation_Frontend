@@ -5,7 +5,7 @@ import { useComparison } from "../../hooks/useComparison";
 import { textFilter, selectColumnFilter } from "../../helpers/table";
 import ContentTable from "./contentTable";
 
-const IndividualIETab = ({
+const AttachRequestTab = ({
   mainInfo,
   secondaryInfo,
   mainError,
@@ -59,22 +59,23 @@ const IndividualIETab = ({
     }
     return columns;
   }, [mainInfo, secondaryInfo, secondaryRATSIM]);
+  const data = { result: [] };
 
-  const [prepareData] = useComparison(
-    mainInfo,
-    secondaryInfo,
-    mainError,
-    mainRetry,
-    secondaryError,
-    secondaryRetry,
-    fields,
-    mainData,
-    secondaryData,
-    secondaryRATSIM
-  );
-  const data = useMemo(() => {
-    return prepareData();
-  }, [secondaryInfo, mainData, secondaryData, fields, secondaryRATSIM]);
+  // const [prepareData] = useComparison(
+  //   mainInfo,
+  //   secondaryInfo,
+  //   mainError,
+  //   mainRetry,
+  //   secondaryError,
+  //   secondaryRetry,
+  //   fields,
+  //   mainData,
+  //   secondaryData,
+  //   secondaryRATSIM
+  // );
+  // const data = useMemo(() => {
+  //   return prepareData();
+  // }, [secondaryInfo, mainData, secondaryData, fields, secondaryRATSIM]);
 
   return (
     <ContentTable
@@ -86,4 +87,4 @@ const IndividualIETab = ({
   );
 };
 
-export default IndividualIETab;
+export default AttachRequestTab;

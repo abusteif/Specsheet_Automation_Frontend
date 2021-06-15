@@ -258,12 +258,28 @@ const UploadSection = ({
                 // />
               }
               <HexCodeInput
-                role="AttachRequest"
-                placeholderText="Attach Request message type is not supported yet"
+                role="attachRequest"
+                placeholderText="Copy and paste the HEX code of the Attach Request message here"
                 selectedRATSIM={selectedRATSIM}
-                hexData={""}
-                disabled
+                hexData={hexData.attachRequest.data}
+                setHexData={(data) => setHexData(data, "attachRequest")}
+                resetHexData={() => resetHexData("attachRequest")}
+                validateHexData={validateHexData}
+                resetValidationResult={() =>
+                  resetValidationResult("attachRequest")
+                }
+                resetSpecsheetGenerate={resetSpecsheetGenerate}
+                resetSpecsheetUpload={resetSpecsheetUpload}
+                isUploadComplete={specsheet.isUploadComplete}
+                resetIotCycleResults={resetIotCycleResults}
+                statusMessage={getHexDataStatusMessage(hexData.attachRequest)}
+                disabled={
+                  hexData.attachRequest.validateInFlight ||
+                  specsheet.isUploadStarted ||
+                  specsheet.isGenerateStarted
+                }
               />
+
               <HexCodeInput
                 role="ESMInformationRep"
                 placeholderText="ESM Information Response This message type is not supported yet"
@@ -302,7 +318,8 @@ const UploadSection = ({
                   },
                   {
                     label: getButtonLabel("jiraUpload"),
-                    disabled: getButtonDisabledStatus("jiraUpload"),
+                    // disabled: getButtonDisabledStatus("jiraUpload"),
+                    disabled: true,
                     variant: getButtonVariant("jiraUpload"),
                     onClick: () => {
                       setTestCaseExistCheck(true);
