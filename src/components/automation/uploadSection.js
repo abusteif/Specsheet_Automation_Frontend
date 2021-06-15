@@ -259,7 +259,7 @@ const UploadSection = ({
               }
               <HexCodeInput
                 role="attachRequest"
-                placeholderText="Attach Request message type is not supported yet"
+                placeholderText="Copy and paste the HEX code of the Attach Request message here"
                 selectedRATSIM={selectedRATSIM}
                 hexData={hexData.attachRequest.data}
                 setHexData={(data) => setHexData(data, "attachRequest")}
@@ -318,7 +318,8 @@ const UploadSection = ({
                   },
                   {
                     label: getButtonLabel("jiraUpload"),
-                    disabled: getButtonDisabledStatus("jiraUpload"),
+                    // disabled: getButtonDisabledStatus("jiraUpload"),
+                    disabled: true,
                     variant: getButtonVariant("jiraUpload"),
                     onClick: () => {
                       setTestCaseExistCheck(true);
