@@ -1,22 +1,18 @@
 export const allRatSIMItems = [
   {
-    value: "4G_pSIM",
-    name: "4G pSIM",
+    value: "pSIM",
+    name: "pSIM",
   },
   {
-    value: "4G_eSIM",
-    name: "4G eSIM",
+    value: "eSIM",
+    name: "eSIM",
   },
   {
-    value: "4G_DSDS_1",
-    name: "4G DSDS SIM 1",
+    value: "DSDS_1",
+    name: "DSDS SIM 1",
   },
   {
-    value: "4G_DSDS_2",
-    name: "4G DSDS SIM 2",
-  },
-  {
-    value: "5G",
-    name: "5G",
+    value: "DSDS_2",
+    name: "DSDS SIM 2",
   },
 ];
