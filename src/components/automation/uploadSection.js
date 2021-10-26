@@ -401,7 +401,7 @@ const UploadSection = ({
                   {
                     label: getButtonLabel("jiraUpload"),
                     // disabled: getButtonDisabledStatus("jiraUpload"),
-                    // disabled: true,
+                    disabled: true,
                     variant: getButtonVariant("jiraUpload"),
                     onClick: () => {
                       setTestCaseExistCheck(true);
