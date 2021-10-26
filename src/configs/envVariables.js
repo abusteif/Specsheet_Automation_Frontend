@@ -1,2 +1,2 @@
 export const dev = true;
-export const environmentUrl = "http://tburley-ub.wg.dir.telstra.com:5001";
+export const environmentUrl = "http://localhost:5001";

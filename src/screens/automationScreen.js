@@ -22,6 +22,7 @@ import {
   resetSpecsheetGenerate,
   uploadSpecsheetToJira,
   resetSpecsheetUpload,
+  checkIfAlreadyUploaded,
 } from "../actions/automation-actions";
 
 import {
@@ -125,6 +126,7 @@ const AutomationScreen = (props) => {
           // props.resetSecondaryIotCycles();
           // props.resetSecondaryIotCycle();
         }}
+        checkIfAlreadyUploaded={props.checkIfAlreadyUploaded}
         backendToken={props.common.token}
       />
     </Screen>
@@ -132,6 +134,7 @@ const AutomationScreen = (props) => {
 };
 
 const mapStateToProps = (state) => {
+  console.log(state);
   return {
     common: state.common,
     automation: state.automation,
@@ -160,4 +163,5 @@ export default connect(mapStateToProps, {
   resetSecondaryIotCycles,
   resetSecondaryIotCycle,
   resetSelectedDevice,
+  checkIfAlreadyUploaded,
 })(AutomationScreen);

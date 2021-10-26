@@ -11,6 +11,7 @@ import {
   RESET_SPECSHEET_GENERATE,
   BEGIN_SPECSHEET_UPLOAD,
   FINISH_SPECSHEET_UPLOAD,
+  CHECK_IF_ALREADY_UPLOADED,
   RESET_SPECSHEET_UPLOAD,
   RESET_RAT_SIM,
 } from "../actions/automation-actions";
@@ -22,6 +23,7 @@ const defaultHex = {
   validateInFlight: false,
   validated: false,
   validationError: false,
+  alreadyUploaded: false,
 };
 
 const defaultState = {
@@ -104,7 +106,16 @@ export const automationReducer = (state = defaultState, action) => {
         newHexData4[action.payload.messageType].validationError = true;
       }
       return { ...state, hexData: newHexData4 };
+    case CHECK_IF_ALREADY_UPLOADED:
+      console.log("aaaaaaaa");
+      let newHexData5 = { ...state.hexData };
+      // console.log(action.payload);
 
+      if (action.payload.dispatchData.status === 200) {
+        newHexData5[action.payload.messageType].alreadyUploaded =
+          action.payload.dispatchData.data;
+      }
+      return { ...state, hexData: newHexData5 };
     case VALIDATE_HEX_DATA_IN_FLIGHT:
       let newHexData3 = { ...state.hexData };
       newHexData3[action.payload.messageType].validateInFlight =
@@ -145,6 +156,21 @@ export const automationReducer = (state = defaultState, action) => {
     case RESET_SPECSHEET_UPLOAD:
       return {
         ...state,
+        hexData: {
+          ...state.hexData,
+          UECapabilityInformation_4G: {
+            ...state.hexData.UECapabilityInformation_4G,
+            alreadyUploaded: false,
+          },
+          UECapabilityInformation_5G: {
+            ...state.hexData.UECapabilityInformation_5G,
+            alreadyUploaded: false,
+          },
+          attachRequest: {
+            ...state.hexData.attachRequest,
+            alreadyUploaded: false,
+          },
+        },
         specsheet: {
           ...state.specsheet,
           isUploadStarted: false,
@@ -165,9 +191,10 @@ export const automationReducer = (state = defaultState, action) => {
           ...state.specsheet,
           isUploadStarted: false,
           isUploadComplete: true,
-          uploadError: action.payload,
+          uploadError: state.specsheet.uploadError ? true : action.payload,
         },
       };
+
     default:
       return state;
   }

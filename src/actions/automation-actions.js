@@ -15,6 +15,7 @@ export const FINISH_SPECSHEET_GENERATE = "automation/FINISH_SPECSHEET_GENERATE";
 export const RESET_SPECSHEET_GENERATE = "automation/RESET_SPECSHEET_GENERATE";
 export const BEGIN_SPECSHEET_UPLOAD = "automation/BEGIN_SPECSHEET_UPLOAD";
 export const FINISH_SPECSHEET_UPLOAD = "automation/FINISH_SPECSHEET_UPLOAD";
+export const CHECK_IF_ALREADY_UPLOADED = "automation/CHECK_IF_ALREADY_UPLOADED";
 export const UPLOAD_SPECSHEET = "automation/UPLOAD_SPECSHEET";
 export const RESET_SPECSHEET_UPLOAD = "automation/RESET_SPECSHEET_UPLOAD";
 export const RESET_RAT_SIM = "automation/RESET_RAT_SIM";
@@ -205,4 +206,34 @@ export const uploadSpecsheetToJira = (
       dispatchData.errorMessage = e.message;
     }
   }
+};
+
+export const checkIfAlreadyUploaded = (
+  device,
+  iotCycle,
+  simType,
+  messageType
+) => async (dispatch, getState) => {
+  let token = getState().common.token;
+  dispatchData = {};
+  try {
+    dispatchData = await backend("executionStatus", {
+      params: {
+        device,
+        iotCycle,
+        simType,
+        messageType,
+      },
+      headers: {
+        Authorization: token,
+      },
+    });
+    dispatch({
+      type: CHECK_IF_ALREADY_UPLOADED,
+      payload: {
+        dispatchData,
+        messageType,
+      },
+    });
+  } catch (e) {}
 };

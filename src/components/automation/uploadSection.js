@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import ReactDOM from "react-dom";
 import Spinner from "react-bootstrap/Spinner";
 
@@ -40,9 +40,64 @@ const UploadSection = ({
   uploadSpecsheetToJira,
   resetSpecsheetUpload,
   resetIotCycleResults,
+  checkIfAlreadyUploaded,
   backendToken,
 }) => {
   const [testCaseExistCheck, setTestCaseExistCheck] = useState(false);
+  useEffect(() => {
+    {
+      (hexData.attachRequest.alreadyUploaded ||
+        hexData.UECapabilityInformation_4G.alreadyUploaded) &&
+        confirmAlert({
+          customUI: ({ onClose }) => {
+            let key = "a";
+            return (
+              <Popup
+                title="Test Case Already Executed!"
+                message1={`Results of ${key} ${selectedRATSIM
+                  .split("_")
+                  .slice(1)
+                  .join("_")} for ${selectedDevice.name} - ${
+                  selectedIotCycle.name
+                } were previously uploaded to Jira.`}
+                message2=" Would like you to overwrite previous run? "
+                onOk={() => {
+                  if (hexData.attachRequest.alreadyUploaded) {
+                    uploadSpecsheetToJira(
+                      hexData.attachRequest.data,
+                      "attachRequest",
+                      selectedRATSIM.split("_").slice(1).join("_"),
+                      selectedDevice.name,
+                      selectedIotCycle.name
+                    );
+                    onClose();
+                  }
+                  if (hexData.UECapabilityInformation_4G.alreadyUploaded) {
+                    uploadSpecsheetToJira(
+                      hexData.UECapabilityInformation_4G.data,
+                      "UECapabilityInformation_4G",
+                      selectedRATSIM.split("_").slice(1).join("_"),
+                      selectedDevice.name,
+                      selectedIotCycle.name
+                    );
+                    onClose();
+                  }
+                }}
+                onCancel={() => {
+                  setTestCaseExistCheck(false);
+                  onClose();
+                }}
+              />
+            );
+          },
+          closeOnClickOutside: false,
+        });
+    }
+  }, [
+    hexData.attachRequest.alreadyUploaded,
+    hexData.UECapabilityInformation_4G.alreadyUploaded,
+  ]);
+
   const getButtonVariant = (button) => {
     switch (button) {
       case "specsheet":
@@ -172,7 +227,6 @@ const UploadSection = ({
     }
     return <span style={{ color }}>{statusMessage} </span>;
   };
-
   return (
     <div className="upload-section">
       <div className="upload-section-header">
@@ -205,8 +259,30 @@ const UploadSection = ({
           selectedRATSIM !== "5G" ? (
             <>
               <HexCodeInput
-                role="UECapabilityInformation_4G"
+                role="attachRequest"
                 headerText="Choose one of the following options to upload your data"
+                placeholderText="Copy and paste the HEX code of the Attach Request message here"
+                selectedRATSIM={selectedRATSIM}
+                hexData={hexData.attachRequest.data}
+                setHexData={(data) => setHexData(data, "attachRequest")}
+                resetHexData={() => resetHexData("attachRequest")}
+                validateHexData={validateHexData}
+                resetValidationResult={() =>
+                  resetValidationResult("attachRequest")
+                }
+                resetSpecsheetGenerate={resetSpecsheetGenerate}
+                resetSpecsheetUpload={resetSpecsheetUpload}
+                isUploadComplete={specsheet.isUploadComplete}
+                resetIotCycleResults={resetIotCycleResults}
+                statusMessage={getHexDataStatusMessage(hexData.attachRequest)}
+                disabled={
+                  hexData.attachRequest.validateInFlight ||
+                  specsheet.isUploadStarted ||
+                  specsheet.isGenerateStarted
+                }
+              />
+              <HexCodeInput
+                role="UECapabilityInformation_4G"
                 selectedRATSIM={selectedRATSIM}
                 hexData={hexData.UECapabilityInformation_4G.data}
                 setHexData={(data) =>
@@ -226,6 +302,31 @@ const UploadSection = ({
                 )}
                 disabled={
                   hexData.UECapabilityInformation_4G.validateInFlight ||
+                  specsheet.isUploadStarted ||
+                  specsheet.isGenerateStarted
+                }
+              />
+              <HexCodeInput
+                role="UECapabilityInformation_5G"
+                selectedRATSIM={selectedRATSIM}
+                hexData={hexData.UECapabilityInformation_5G.data}
+                setHexData={(data) =>
+                  setHexData(data, "UECapabilityInformation_5G")
+                }
+                resetHexData={() => resetHexData("UECapabilityInformation_5G")}
+                validateHexData={validateHexData}
+                resetValidationResult={() =>
+                  resetValidationResult("UECapabilityInformation_5G")
+                }
+                resetSpecsheetGenerate={resetSpecsheetGenerate}
+                resetSpecsheetUpload={resetSpecsheetUpload}
+                isUploadComplete={specsheet.isUploadComplete}
+                resetIotCycleResults={resetIotCycleResults}
+                statusMessage={getHexDataStatusMessage(
+                  hexData.UECapabilityInformation_5G
+                )}
+                disabled={
+                  hexData.UECapabilityInformation_5G.validateInFlight ||
                   specsheet.isUploadStarted ||
                   specsheet.isGenerateStarted
                 }
@@ -257,36 +358,17 @@ const UploadSection = ({
                 //   disabled={hexDataValidateInFlight}
                 // />
               }
-              <HexCodeInput
-                role="attachRequest"
-                placeholderText="Copy and paste the HEX code of the Attach Request message here"
-                selectedRATSIM={selectedRATSIM}
-                hexData={hexData.attachRequest.data}
-                setHexData={(data) => setHexData(data, "attachRequest")}
-                resetHexData={() => resetHexData("attachRequest")}
-                validateHexData={validateHexData}
-                resetValidationResult={() =>
-                  resetValidationResult("attachRequest")
-                }
-                resetSpecsheetGenerate={resetSpecsheetGenerate}
-                resetSpecsheetUpload={resetSpecsheetUpload}
-                isUploadComplete={specsheet.isUploadComplete}
-                resetIotCycleResults={resetIotCycleResults}
-                statusMessage={getHexDataStatusMessage(hexData.attachRequest)}
-                disabled={
-                  hexData.attachRequest.validateInFlight ||
-                  specsheet.isUploadStarted ||
-                  specsheet.isGenerateStarted
-                }
-              />
 
-              <HexCodeInput
-                role="ESMInformationRep"
-                placeholderText="ESM Information Response This message type is not supported yet"
-                selectedRATSIM={selectedRATSIM}
-                hexData={""}
-                disabled
-              />
+              {
+                // <HexCodeInput
+                //   role="ESMInformationRep"
+                //   placeholderText="ESM Information Response This message type is not supported yet"
+                //   selectedRATSIM={selectedRATSIM}
+                //   hexData={""}
+                //   disabled
+                // />
+              }
+
               <UploadSectionButtons
                 buttons={[
                   {
@@ -319,7 +401,7 @@ const UploadSection = ({
                   {
                     label: getButtonLabel("jiraUpload"),
                     // disabled: getButtonDisabledStatus("jiraUpload"),
-                    disabled: true,
+                    // disabled: true,
                     variant: getButtonVariant("jiraUpload"),
                     onClick: () => {
                       setTestCaseExistCheck(true);
@@ -333,6 +415,12 @@ const UploadSection = ({
                         /// TODO: selectedRATSIM
                         _.forEach(hexData, (value, key) => {
                           if (hexData[key].validated) {
+                            checkIfAlreadyUploaded(
+                              selectedDevice.name,
+                              selectedIotCycle.name,
+                              selectedRATSIM.split("_").slice(1).join("_"),
+                              key
+                            );
                             let callBackFalse = () => {
                               setTestCaseExistCheck(false);
 
@@ -393,7 +481,7 @@ const UploadSection = ({
                               selectedRATSIM.split("_").slice(1).join("_"),
                               key,
                               backendToken,
-                              callBackTrue,
+                              null,
                               callBackFalse,
                               () => {
                                 setTestCaseExistCheck(false);
