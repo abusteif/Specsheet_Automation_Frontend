@@ -108,6 +108,7 @@ const UploadSection = ({
 
         return "secondary";
       case "jiraUpload":
+        return "secondary";
         // if (testCaseExistCheck) return "info";
         if (specsheet.uploadError) return "danger";
         if (specsheet.isUploadStarted || testCaseExistCheck) return "info";
@@ -133,8 +134,16 @@ const UploadSection = ({
           return "Spec sheet generated successfully! Click here to download";
         if (specsheet.generateError)
           return "An error occurred while generating the spec sheet. Please check HEX data and try again";
+        if (
+          hexData.UECapabilityInformation_5G.data.length > 1 &&
+          hexData.UECapabilityInformation_4G.data.length < 1
+        ) {
+          return "5G spec sheet requires 4G HEX";
+        }
         return "Populate spec sheet and download as Excel file";
+
       case "jiraUpload":
+        return "Jira upload is not supported at the moment";
         if (testCaseExistCheck)
           return (
             <>
@@ -193,11 +202,19 @@ const UploadSection = ({
 
     switch (button) {
       case "specsheet":
+        // console.log(hexData.UECapabilityInformation_5G.data);
+        // console.log(!hexData.UECapabilityInformation_4G.data);
+
+        let missing4G =
+          hexData.UECapabilityInformation_5G.data.length > 1 &&
+          hexData.UECapabilityInformation_4G.data.length < 1;
+        console.log(missing4G);
         return !(
           specSheetButtonStatus &&
           errorFound &&
           !specsheet.isGenerateStarted &&
-          inFlight
+          inFlight &&
+          !missing4G
         );
         break;
       case "jiraUpload":
@@ -331,43 +348,6 @@ const UploadSection = ({
                   specsheet.isGenerateStarted
                 }
               />
-              {
-                // <HexCodeInput
-                //   role="UECapabilityInformation5G"
-                //   headerText={
-                //     ""
-                //     // "Choose one of the following options to upload your data"
-                //   }
-                //   selectedRATSIM={selectedRATSIM}
-                //   hexData={hexData.UECapabilityInformation5G.data}
-                //   setHexData={(data) =>
-                //     setHexData(data, "UECapabilityInformation5G")
-                //   }
-                //   resetHexData={() => resetHexData("UECapabilityInformation5G")}
-                //   validateHexData={validateHexData}
-                //   resetValidationResult={() =>
-                //     resetValidationResult("UECapabilityInformation5G")
-                //   }
-                //   resetSpecsheetGenerate={resetSpecsheetGenerate}
-                //   resetSpecsheetUpload={resetSpecsheetUpload}
-                //   isUploadComplete={specsheet.isUploadComplete}
-                //   resetIotCycleResults={resetIotCycleResults}
-                //   statusMessage={getHexDataStatusMessage(
-                //     hexData.UECapabilityInformation5G
-                //   )}
-                //   disabled={hexDataValidateInFlight}
-                // />
-              }
-
-              {
-                // <HexCodeInput
-                //   role="ESMInformationRep"
-                //   placeholderText="ESM Information Response This message type is not supported yet"
-                //   selectedRATSIM={selectedRATSIM}
-                //   hexData={""}
-                //   disabled
-                // />
-              }
 
               <UploadSectionButtons
                 buttons={[
