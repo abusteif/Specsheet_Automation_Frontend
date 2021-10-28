@@ -140,6 +140,7 @@ const UploadSection = ({
         ) {
           return "5G spec sheet requires 4G HEX";
         }
+
         return "Populate spec sheet and download as Excel file";
 
       case "jiraUpload":
@@ -202,19 +203,21 @@ const UploadSection = ({
 
     switch (button) {
       case "specsheet":
-        // console.log(hexData.UECapabilityInformation_5G.data);
-        // console.log(!hexData.UECapabilityInformation_4G.data);
-
         let missing4G =
           hexData.UECapabilityInformation_5G.data.length > 1 &&
           hexData.UECapabilityInformation_4G.data.length < 1;
-        console.log(missing4G);
+        let missingUEdata =
+          hexData.attachRequest.data.length > 1 &&
+          hexData.UECapabilityInformation_5G.data.length < 1 &&
+          hexData.UECapabilityInformation_4G.data.length < 1;
+
         return !(
           specSheetButtonStatus &&
           errorFound &&
           !specsheet.isGenerateStarted &&
           inFlight &&
-          !missing4G
+          !missing4G &&
+          !missingUEdata
         );
         break;
       case "jiraUpload":
