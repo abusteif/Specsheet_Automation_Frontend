@@ -171,26 +171,6 @@ const UploadSection = ({
     }
   };
 
-  // const getButtonDisabledStatus = (button) => {
-  //   switch (button) {
-  //     case "specsheet":
-  //       return getSpecsheetButtonStatus("specsheet");
-  //
-  //     case "jiraUpload":
-  //       return getSpecsheetButtonStatus("jiraUpload");
-  //     // if (
-  //     //   !isHexDataValidated ||
-  //     //   // specsheet.uploadError ||
-  //     //   specsheet.generateError ||
-  //     //   specsheet.isUploadStarted
-  //     // )
-  //     //   return true;
-  //     // return false;
-  //     default:
-  //       return "";
-  //   }
-  // };
-
   const getButtonDisabledStatus = (button) => {
     let specSheetButtonStatus = false;
     let errorFound = true;
@@ -362,7 +342,9 @@ const UploadSection = ({
                       if (specsheet.isGenerateReady) {
                         fileDownload(
                           specsheet.docData,
-                          `MSR0835_${selectedDevice.name}_${selectedIotCycle.name}.xlsx`
+                          hexData.UECapabilityInformation_5G.data.length < 1
+                            ? `MSR0835_${selectedDevice.name}_${selectedIotCycle.name}.xlsx`
+                            : `ENDC_MSR0835_${selectedDevice.name}_${selectedIotCycle.name}.xlsx`
                         );
                         resetSpecsheetGenerate();
                       } else {
