@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const UploadSectionButtons = ({ buttons }) => {
+const ButtonsSection = ({ buttons, sectionClassName }) => {
   const [allButtons, setAllButtons] = useState(buttons);
 
   useEffect(() => {
@@ -12,12 +12,12 @@ const UploadSectionButtons = ({ buttons }) => {
   }, [buttons]);
 
   return (
-    <div className="upload-section-buttons-section">
+    <div className={sectionClassName}>
       {allButtons.map((button) => (
         <Button
           variant={button.variant}
-          className="upload-section-button"
-          size="lg"
+          className={button.className}
+          size={button.size}
           key={button.key}
           disabled={button.disabled}
           onClick={
@@ -34,4 +34,4 @@ const UploadSectionButtons = ({ buttons }) => {
   );
 };
 
-export default UploadSectionButtons;
+export default ButtonsSection;

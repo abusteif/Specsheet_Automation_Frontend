@@ -11,31 +11,29 @@ import HomeScreen from "../screens/homeScreen";
 import ReportingScreen from "../screens/reportingScreen";
 import AutomationScreen from "../screens/automationScreen";
 import ComparisonScreen from "../screens/comparisonScreen";
+import JiraLandingScreen from "../screens/jiraLandingScreen";
 
 import "../styling/homeScreen.css";
 import "../styling/app.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import { apiErrorMessage, projectKey } from "../configs/staticData";
 const App = (props) => {
   useEffect(() => {
     props.generateCookies();
   }, []);
-  useEffect(() => {
-    if (props.common.token) props.getProjectId(projectKey);
-  }, [props.common.token]);
 
   return (
     <Router history={history}>
       <div className="home-screen">
         <Switch>
           {
-            // <Route path="/" exact component={HomeScreen} />
-            <Route path="/" exact component={AutomationScreen} />
+            <Route path="/" exact component={HomeScreen} />
+            // <Route path="/" exact component={AutomationScreen} />
           }
           <Route path="/reporting" exact component={ReportingScreen} />
           <Route path="/automation" exact component={AutomationScreen} />
           <Route path="/comparison" exact component={ComparisonScreen} />
+          <Route path="/jira" exact component={JiraLandingScreen} />
         </Switch>
       </div>
     </Router>

@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import "../styling/theme/text.css";
 
 const Text = ({ text }) => {
-  return <div className="text">{children}</div>;
+  return <div className="text">{text}</div>;
 };
 
 export default Text;

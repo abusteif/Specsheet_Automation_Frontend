@@ -5,6 +5,10 @@
   border-radius: 5px;
 }
 
+.long-search > .select-search {
+  width: 400px;
+}
+
 .select-search__option.is-selected {
   background: #000e77;
   color: #fff;

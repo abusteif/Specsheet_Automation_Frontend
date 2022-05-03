@@ -31,12 +31,12 @@ import { allRatSIMItems } from "../configs/configurations";
 const ComparisonScreen = (props) => {
   useEffect(() => {
     if (
-      props.common.projectId &&
+      props.automation.projectId &&
       Object.keys(props.common.selectedDevice).length > 0
     ) {
       props.getMessageFields("UECapabilityInformation_4G");
     }
-  }, [props.common.projectId]);
+  }, [props.automation.projectId]);
 
   useEffect(() => {
     if (Object.keys(props.common.selectedDevice).length > 0) {
@@ -56,7 +56,6 @@ const ComparisonScreen = (props) => {
           props.comparison.mainRATSIM.split("_").slice(1).join("_"),
           "main"
         );
-      // return props.resetIotCycleResults(["main", "secondary"]);
     }
     return () => {
       props.resetSecondaryDevice();
@@ -66,11 +65,6 @@ const ComparisonScreen = (props) => {
       props.resetIotCycleResults(["main", "secondary"]);
     };
   }, [props.comparison.mainRATSIM]);
-
-  // useEffect(() => {
-  //
-  // });
-  // const iotCycles = props.common.iotCycles.map((iotCycle) => iotCycle.name);
 
   return (
     <Screen
@@ -87,7 +81,8 @@ const ComparisonScreen = (props) => {
             onSelectDevice={(selectedDevice) => {
               props.resetIotCycleResults(["secondary"]);
               props.resetSecondaryIotCycles();
-              props.getIotCycles(selectedDevice, props.common.projectId);
+              props.getIotCycles(selectedDevice, props.automation.projectId);
+
               props.selectSecondaryDevice(selectedDevice);
               props.resetSecondaryIotCycle();
               props.resetSecondaryRATSIM();
@@ -99,13 +94,6 @@ const ComparisonScreen = (props) => {
               props.resetIotCycleResults(["secondary"]);
               props.resetSecondaryRATSIM();
               props.selectSecondaryIotCycle(selectedIotCycle);
-
-              // props.getIotCycleResults(
-              //   props.comparison.secondaryDevice.name,
-              //   selectedIotCycle,
-              //   props.automation.selectedMessageType,
-              //   "secondary"
-              // );
             }}
             resetSelectedIotCycle={
               Object.keys(props.comparison.secondaryIotCycle).length === 0
@@ -120,7 +108,6 @@ const ComparisonScreen = (props) => {
               props.getIotCycleResults(
                 props.comparison.secondaryDevice.name,
                 props.comparison.secondaryIotCycle.name,
-                // props.automation.selectedMessageType,
                 "UECapabilityInformation_4G",
                 selectedRATSIM.split("_").slice(1).join("_"),
                 "secondary"
@@ -141,12 +128,6 @@ const ComparisonScreen = (props) => {
             mainError={props.comparison.results.mainError}
             mainRetry={() => {
               props.resetIotCycleResults(["main"]);
-              // props.getIotCycleResults(
-              //   props.comparison.mainDevice.name,
-              //   props.comparison.mainIotCycle.name,
-              //   props.automation.selectedMessageType,
-              //   "main"
-              // );
 
               props.getIotCycleResults(
                 props.common.selectedDevice.name,

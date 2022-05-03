@@ -16,6 +16,8 @@ import {
   RESET_RAT_SIM,
 } from "../actions/automation-actions";
 
+import { GET_PROJECT_ID } from "../actions/common-actions";
+
 var _ = require("lodash");
 
 const defaultHex = {
@@ -27,6 +29,7 @@ const defaultHex = {
 };
 
 const defaultState = {
+  projectId: "",
   selectedRATSIM: null,
   hexData: {
     UECapabilityInformation_4G: { ...defaultHex },
@@ -48,6 +51,12 @@ const defaultState = {
 
 export const automationReducer = (state = defaultState, action) => {
   switch (action.type) {
+    case GET_PROJECT_ID:
+      if (action.payload.domain === "automation")
+        return { ...state, projectId: action.payload.response.data.id };
+      else {
+        return { ...state };
+      }
     case SELECT_RAT_SIM:
       return { ...state, selectedRATSIM: action.payload };
     case RESET_RAT_SIM:

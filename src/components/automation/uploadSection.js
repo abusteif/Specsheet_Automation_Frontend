@@ -8,7 +8,7 @@ import history from "../../history";
 
 import HexCodeInput from "./hexCodeInput";
 import UploadSectionHeader from "./uploadSectionHeader";
-import UploadSectionButtons from "./uploadSectionButtons";
+import ButtonsSection from "../buttonsSection";
 import ProgressBar from "../../theme/progressBar";
 import Popup from "../../theme/popup";
 
@@ -332,12 +332,16 @@ const UploadSection = ({
                 }
               />
 
-              <UploadSectionButtons
+              <ButtonsSection
+                sectionClassName="upload-section-buttons-section"
                 buttons={[
                   {
                     label: getButtonLabel("specsheet"),
                     disabled: getButtonDisabledStatus("specsheet"),
                     variant: getButtonVariant("specsheet"),
+                    className: "upload-section-button",
+                    size: "lg",
+
                     onClick: () => {
                       if (specsheet.isGenerateReady) {
                         fileDownload(
@@ -368,6 +372,9 @@ const UploadSection = ({
                     // disabled: getButtonDisabledStatus("jiraUpload"),
                     disabled: true,
                     variant: getButtonVariant("jiraUpload"),
+                    className: "upload-section-button",
+                    size: "lg",
+
                     onClick: () => {
                       setTestCaseExistCheck(true);
                       if (

@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 
 import { HiOutlineDocumentReport } from "react-icons/hi";
 import { GiBulldozer } from "react-icons/gi";
+import { SiJira } from "react-icons/si";
 
 import AppHeader from "../components/appHeader";
 import Screen from "./screenTemplate";
@@ -22,13 +23,25 @@ const HomeScreen = (props) => {
       }
     >
       <div className="home-screen-body">
+        {
+          // <Link
+          //   to="/reporting"
+          //   style={{ color: "inherit", textDecoration: "inherit" }}
+          // >
+          //   <Button className="home-screen-button">
+          //     <HiOutlineDocumentReport size={50} />
+          //     <div style={{ marginLeft: 20 }}> Reporting </div>
+          //   </Button>
+          // </Link>
+        }
+
         <Link
-          to="/reporting"
+          to="/jira"
           style={{ color: "inherit", textDecoration: "inherit" }}
         >
           <Button className="home-screen-button">
-            <HiOutlineDocumentReport size={50} />
-            <div style={{ marginLeft: 20 }}> Reporting </div>
+            <SiJira size={50} />
+            <div style={{ marginLeft: 20 }}> Jira </div>
           </Button>
         </Link>
         <Link

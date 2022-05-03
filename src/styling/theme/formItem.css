@@ -1,0 +1,7 @@
+.form-item {
+  display: flex;
+  flex-direction: column;
+  height: 80px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+}

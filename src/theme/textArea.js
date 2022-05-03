@@ -8,6 +8,10 @@ const TextArea = ({
   textProcessor,
   initialValue,
   disabled,
+  maxLength,
+  onBlur,
+  resetValue,
+  style,
 }) => {
   const [value, setValue] = useState("");
   useEffect(() => {
@@ -16,14 +20,21 @@ const TextArea = ({
       setValue(initialValue);
     }
   }, [initialValue]);
-
+  useEffect(() => {
+    if (resetValue) setValue("");
+  }, [resetValue]);
   return (
     <textarea
       type="textarea"
       className="text-area"
+      style={style}
       placeholder={placeholder}
+      onBlur={(event) => {
+        onBlur && onBlur(event.target.value);
+      }}
       disabled={disabled}
       value={value}
+      maxLength={maxLength}
       onChange={(event) => {
         let newText = event.target.value;
         if (textProcessor) {

@@ -16,3 +16,12 @@ export const allRatSIMItems = [
     name: "DSDS SIM 2",
   },
 ];
+
+export const STARTED = "STARTED";
+export const UNSTARTED = "UNSTARTED";
+export const SUCCESS = "SUCCESS";
+export const ERROR = "ERROR";
+
+export const LOGGEDIN = "LOGGEDIN";
+export const LOGGEDOUT = "LOGGEDOUT";
+export const LOGGINGIN = "LOGGINGIN";

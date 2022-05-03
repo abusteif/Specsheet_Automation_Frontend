@@ -11,7 +11,7 @@ const Popup = ({ onOk, onCancel, title, message1, message2 }) => {
     <div className="main-popup-container">
       <h2 className="popup-header">{title}</h2>
       <p className="popup-message">{message1}</p>
-      <p className="popup-message">{message2}</p>
+      {message2 && <p className="popup-message">{message2}</p>}
 
       <div className="popup-buttons-container">
         <Button
