@@ -1,4 +1,6 @@
 .main-popup-container {
+  display: flex;
+  flex-direction: column;
   font-family: Arial, Helvetica, sans-serif;
   width: 600px;
   padding: 30px;
@@ -20,6 +22,7 @@
 .popup-buttons-container {
   display: flex;
   justify-content: space-between;
+  padding-top: 10px;
 }
 .popup-button {
   width: 250px;

@@ -1,4 +1,6 @@
 import {
+  LOGIN,
+  LOGOUT,
   GET_TOKEN,
   GET_ZEPHYR_STATUS,
   GET_DEVICES,
@@ -11,11 +13,19 @@ import {
   RESET_ALL_IOT_CYCLES,
 } from "../actions/common-actions";
 
+import {
+  LOGGEDIN,
+  LOGGEDOUT,
+  LOGGINGIN,
+  ERROR,
+} from "../configs/configurations";
+
 const defaultState = {
+  loginDetails: {},
+  loginStatus: LOGGEDOUT,
   token: "",
   status: true,
   errorMessage: "",
-  projectId: "",
   devices: [],
   selectedDevice: {},
   iotCycles: [],
@@ -34,10 +44,28 @@ export const commonReducer = (state = defaultState, action) => {
   }
 
   switch (action.type) {
+    case LOGIN:
+      if (state.loginStatus === LOGGEDOUT || state.loginStatus === ERROR)
+        return { ...state, loginStatus: LOGGINGIN };
+      else {
+        if (action.payload.dispatchData.status === 200)
+          return {
+            ...state,
+            loginStatus: LOGGEDIN,
+            loginDetails: action.payload.dispatchData.data,
+          };
+        else {
+          return {
+            ...state,
+            loginStatus: ERROR,
+            loginDetails: null,
+          };
+        }
+      }
+    case LOGOUT:
+      return { ...state, loginDetails: {}, loginStatus: LOGGEDOUT };
     case GET_TOKEN:
       return { ...state, token: action.payload.data.token };
-    case GET_PROJECT_ID:
-      return { ...state, projectId: action.payload.data.id };
     case GET_DEVICES:
       return { ...state, devices: action.payload.data.values };
     case SELECT_DEVICE:

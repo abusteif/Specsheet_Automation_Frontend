@@ -42,23 +42,24 @@ import { allRatSIMItems } from "../configs/configurations";
 
 const AutomationScreen = (props) => {
   useEffect(() => {
-    if (props.common.projectId) {
-      props.getDevices(props.common.projectId);
+    if (props.automation.projectId) {
+      props.getDevices(props.automation.projectId);
     } else {
-      props.getProjectId(projectKey);
+      props.getProjectId(projectKey, "automation");
     }
     return () => {
       props.resetHexData();
       props.resetValidationResult();
       props.resetSpecsheetUpload();
     };
-  }, [props.common.projectId]);
+  }, [props.automation.projectId]);
 
   return (
     <Screen
       subMessage={
         !props.common.status && apiErrorMessage + props.common.errorMessage
       }
+      loadingOverlayActive={!props.automation.projectId}
     >
       <DeviceSelectionSection
         disableAll={
@@ -73,7 +74,8 @@ const AutomationScreen = (props) => {
           props.resetRATSIM();
           props.resetSpecsheetUpload();
           props.resetSpecsheetGenerate();
-          props.getIotCycles(selectedDevice, props.common.projectId);
+          props.getIotCycles(selectedDevice, props.automation.projectId);
+
           props.selectDevice(selectedDevice);
           props.resetSelectedIotCycle();
         }}
@@ -110,10 +112,6 @@ const AutomationScreen = (props) => {
         setHexData={props.setHexData}
         resetHexData={props.resetHexData}
         validateHexData={props.validateHexData}
-        // isHexDataValidated={props.automation.isHexDataValidated}
-        // hexValidationError={props.automation.hexValidationError}
-        // hexDataValidateInFlight={props.automation.hexDataValidateInFlight}
-
         resetValidationResult={props.resetValidationResult}
         populateSpecsheet={props.populateSpecsheet}
         specsheet={props.automation.specsheet}
@@ -122,9 +120,6 @@ const AutomationScreen = (props) => {
         resetSpecsheetUpload={props.resetSpecsheetUpload}
         resetIotCycleResults={() => {
           props.resetIotCycleResults(["main", "secondary"]);
-          // props.resetSecondaryDevice();
-          // props.resetSecondaryIotCycles();
-          // props.resetSecondaryIotCycle();
         }}
         checkIfAlreadyUploaded={props.checkIfAlreadyUploaded}
         backendToken={props.common.token}

@@ -5,7 +5,9 @@
   border-width: 1px;
   border-color: #000e77;
   font-size: 15px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  padding-left: 10px;
+  padding-top: 2px;
 }
 textarea:focus {
   border-style: none;
