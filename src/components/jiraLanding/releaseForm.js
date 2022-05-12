@@ -217,7 +217,7 @@ const JiraReleaseForm = ({
                   issueType: "release",
                   vendor: selectedVendor,
                   deviceModel: deviceModel,
-                  type: selectedDeviceType,
+                  deviceType: selectedDeviceType,
                 });
                 setConfirmDetails(false);
                 onClose();
