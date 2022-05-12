@@ -5,6 +5,7 @@ import Spinner from "react-bootstrap/Spinner";
 import JiraDeviceForm from "./deviceForm";
 import JiraReleaseForm from "./releaseForm";
 import JiraIotCycleForm from "./iotCycleForm";
+import JiraDefectForm from "./defectForm";
 
 import KeyValueLine from "../../theme/keyValueLine";
 
@@ -68,6 +69,7 @@ const JiraWorkSection = ({
   resetReleasesForDevice,
   createRelease,
   createIOTCycle,
+  createDefect,
   loginDetails,
   ready,
   backendRequestStatus,
@@ -131,13 +133,14 @@ const JiraWorkSection = ({
             selectedVendor={selectedVendor}
             selectModel={selectModel}
             selectedModel={selectedModel}
+            getDeviceTypes={getDeviceTypes}
+            deviceTypes={deviceTypes}
+            selectDeviceType={selectDeviceType}
+            selectedDeviceType={selectedDeviceType}
             resetDevicesForVendorList={resetDevicesForVendorList}
             testingRequestTypes={testingRequestTypes}
-            // testingPriorities={testingPriorities}
             selectedTestingRequestType={selectedTestingRequestType}
             selectTestingRequestType={selectTestingRequestType}
-            // selectTestingPriority={selectTestingPriority}
-            // selectedTestingPriority={selectedTestingPriority}
             selectWDATestScope={selectWDATestScope}
             wdaTestScopes={wdaTestScopes}
             selectedWDATestScope={selectedWDATestScope}
@@ -156,8 +159,10 @@ const JiraWorkSection = ({
             selectChangeDescription={selectChangeDescription}
             selectedChangeDescription={selectedChangeDescription}
             getReleasesForDevice={getReleasesForDevice}
+            releasesForDevice={releasesForDevice}
             createRelease={createRelease}
             selectRelease={selectRelease}
+            selectMarketName={selectMarketName}
             newCreatedKey={newCreatedKey}
             selectAsset={selectAsset}
             loginDetails={loginDetails}
@@ -189,9 +194,17 @@ const JiraWorkSection = ({
             resetReleasesForDevice={resetReleasesForDevice}
             createIOTCycle={createIOTCycle}
             creationStatus={creationStatus}
+            newCreatedKey={newCreatedKey}
             modified={modified}
             backendRequestStatus={backendRequestStatus}
             resetAll={resetAll}
+          />
+        );
+      case "Defect":
+        return (
+          <JiraDefectForm
+            createDefect={createDefect}
+            resetCreationStatus={resetCreationStatus}
           />
         );
     }
@@ -205,7 +218,7 @@ const JiraWorkSection = ({
             <KeyValueLine
               keyProp={`${selectedOperation} ${selectedAsset}`}
               valueProp={`${selectedVendor} ${selectedModel} ${
-                selectedMarketName ? `(${selectedMarketName})` : ""
+                selectedVendor && selectedModel ? `(${selectedMarketName})` : ""
               }`}
             />
           </div>

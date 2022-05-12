@@ -221,27 +221,34 @@ export const jiraReducer = (state = defaultState, action) => {
       let newDeviceList = [];
       let model = null;
       for (var device in action.payload.data) {
-        let model = null;
-        var sp = action.payload.data[device].summary.split(" ");
-        for (var i = 4; i > 0; i--) {
-          if (state.vendors.find((x) => x.name === sp.slice(0, i).join(" "))) {
-            model = sp.slice(i).join(" ");
-            break;
-          }
-          if (!model) model = action.payload.data[device].summary;
-        }
-        // if (state.vendors.find((x) => x.name === sp.slice(0, 4).join(" "))) {
-        //   console.log(sp.slice(3).join(" "));
+        let model = action.payload.data[device].modelMarketName
+          .split("(")[0]
+          .trim();
+        let marketName = action.payload.data[device].modelMarketName
+          .split("(")[1]
+          ?.split(")")[0]
+          .trim();
+        // var sp = action.payload.data[device].summary.split(" ");
+        // for (var i = 4; i > 0; i--) {
+        //   if (state.vendors.find((x) => x.name === sp.slice(0, i).join(" "))) {
+        //     model = sp.slice(i).join(" ");
+        //     break;
+        //   }
+        //   if (!model) model = action.payload.data[device].summary;
         // }
-        // else if (state.vendors.find((x) => x.name === sp.slice(0, 3).join(" ")))
+        let { key, type, summary } = action.payload.data[device];
         newDeviceList = [
           ...newDeviceList,
           {
-            ...action.payload.data[device],
+            key,
+            type,
+            summary,
             model,
+            marketName,
           },
         ];
       }
+      console.log(newDeviceList);
       return {
         ...state,
         devicesForVendor: newDeviceList,
@@ -290,7 +297,6 @@ export const jiraReducer = (state = defaultState, action) => {
     }
 
     case RESET_ALL:
-      console.log("reset");
       return {
         ...state,
         ...initialState,

@@ -21,6 +21,7 @@ import {
   STARTED,
 } from "../../configs/configurations";
 import { jiraTicketBaseURL } from "../../configs/staticData";
+var _ = require("lodash");
 
 const JiraIotCycleForm = ({
   resetDevicesForVendorList,
@@ -43,6 +44,8 @@ const JiraIotCycleForm = ({
   createIOTCycle,
   modified,
   creationStatus,
+  newCreatedKey,
+
   resetCreationStatus,
   backendRequestStatus,
   resetAll,
@@ -52,7 +55,17 @@ const JiraIotCycleForm = ({
   const [iotCycleDetails, setIotCycleDetails] = useState([]);
   const [summary, setSummary] = useState("");
   const [saveButton, setSaveButton] = useState(false);
+  const [confirmDetails, setConfirmDetails] = useState(false);
+  const [bau, setBau] = useState(false);
 
+  useEffect(() => {
+    if (selectedRelease)
+      setBau(
+        releasesForDevice?.find((release) => {
+          return release.key === selectedRelease;
+        })?.bau + 1
+      );
+  }, [selectedRelease]);
   useEffect(() => {
     if (creationStatus !== UNSTARTED) resetCreationStatus();
     if (
@@ -65,71 +78,152 @@ const JiraIotCycleForm = ({
     else {
       setSaveButton(true);
     }
-    let bau = 0;
-    if (selectedRelease)
-      bau =
-        releasesForDevice?.find((release) => {
-          return release.key === selectedRelease;
-        })?.bau + 1;
+
     let mrNum;
     if (releasesForDevice.length == 1) mrNum = "NR";
     if (releasesForDevice.length > 1)
-      mrNum = "MR" + releasesForDevice.length - 1;
+      mrNum = "MR" + (releasesForDevice.length - 1);
     setSummary(`${selectedVendor} ${selectedModel} - ${mrNum}.IOT${bau}`);
 
-    console.log(summary);
+    setIotCycleDetails([
+      { fieldName: "Summary", fieldValue: summary },
 
-    // setIotCycleDetails([
-    //   { fieldName: "Summary", fieldValue: summary },
-    //
-    //   { fieldName: "Vendor", fieldValue: selectedVendor },
-    //   { fieldName: "Model", fieldValue: selectedModel },
-    //   {
-    //     fieldName: "Epic Name",
-    //     fieldValue: epicName,
-    //   },
-    //   {
-    //     fieldName: "Testing Request Type",
-    //     fieldValue: selectedTestingRequestType,
-    //   },
-    //   // {
-    //   //   fieldName: "Testing Priority",
-    //   //   fieldValue: selectedTestingPriority,
-    //   // },
-    //   {
-    //     fieldName: "WDA Test Scope",
-    //     fieldValue: selectedWDATestScope,
-    //   },
-    //   {
-    //     fieldName: "Baseline Date",
-    //     fieldValue:
-    //       selectedBaselineDate &&
-    //       `${selectedBaselineDate.getDate()}-${
-    //         selectedBaselineDate.getMonth() + 1
-    //       }-${selectedBaselineDate.getFullYear()}`,
-    //   },
-    //   {
-    //     fieldName: "Funding",
-    //     fieldValue: selectedFunding,
-    //   },
-    //   {
-    //     fieldName: "Change Description",
-    //     fieldValue: selectedChangeDescription,
-    //   },
-    // ]);
+      { fieldName: "Vendor", fieldValue: selectedVendor },
+      { fieldName: "Model", fieldValue: selectedModel },
+      {
+        fieldName: "Release",
+        fieldValue: _.find(releasesForDevice, { key: selectedRelease })?.name,
+      },
+
+      {
+        fieldName: "Planned Start Date",
+        fieldValue:
+          selectedPlannedStartDate &&
+          `${selectedPlannedStartDate.getDate()}-${
+            selectedPlannedStartDate.getMonth() + 1
+          }-${selectedPlannedStartDate.getFullYear()}`,
+      },
+      {
+        fieldName: "Planned Delivery Date",
+        fieldValue:
+          selectedPlannedDeliveryDate &&
+          `${selectedPlannedDeliveryDate.getDate()}-${
+            selectedPlannedDeliveryDate.getMonth() + 1
+          }-${selectedPlannedDeliveryDate.getFullYear()}`,
+      },
+    ]);
   }, [
     selectedVendor,
     selectedModel,
+    selectedRelease,
     selectedPlannedStartDate,
     selectedPlannedDeliveryDate,
   ]);
 
-  const getKeyForModel = (allModel, desiredModel) => {
-    const modelId = allModel.find((item) => {
-      return item.model === desiredModel;
-    });
-    return modelId.key;
-  };
+  useEffect(() => {
+    if (confirmDetails) {
+      confirmAlert({
+        customUI: ({ onClose }) => {
+          return (
+            <CreationStatusPopup
+              status="Confirm IOT Cycle Details"
+              title="The following IOT Cycle will be created. Click OK to confirm"
+              lineItems={iotCycleDetails}
+              color="blue"
+              onOk={() => {
+                createIOTCycle({
+                  summary: summary,
+                  epicLink: selectedRelease,
+
+                  plannedStartDate: `${selectedPlannedStartDate.getFullYear()}-${
+                    selectedPlannedStartDate.getMonth() + 1
+                  }-${selectedPlannedStartDate.getDate()}`,
+
+                  plannedDeliveryDate: `${selectedPlannedDeliveryDate.getFullYear()}-${
+                    selectedPlannedDeliveryDate.getMonth() + 1
+                  }-${selectedPlannedDeliveryDate.getDate()}`,
+                  bau,
+                  vendor: selectedVendor,
+                  issueType: "iotCycle",
+                });
+                setConfirmDetails(false);
+                onClose();
+              }}
+              onCancel={() => {
+                setConfirmDetails(false);
+                onClose();
+              }}
+            />
+          );
+        },
+
+        closeOnClickOutside: true,
+        onClickOutside: () => {
+          setConfirmDetails(false);
+        },
+      });
+    }
+  }, [confirmDetails]);
+
+  useEffect(() => {
+    if (creationStatus !== UNSTARTED) setSaveButton(false);
+    // if (creationStatus === SUCCESS) {
+    //   getReleasesForDevice(getKeyForModel(devicesForVendor, selectedModel));
+    //   // console.log(newCreatedKey);
+    //   selectRelease(newCreatedKey);
+    // }
+
+    creationStatus !== UNSTARTED &&
+      confirmAlert({
+        customUI: ({ onClose }) => {
+          switch (creationStatus) {
+            case STARTED:
+              return (
+                <CreationStatusPopup
+                  status={
+                    <>
+                      {"CREATING YOUR IOT CYCLE  "}
+                      <Spinner
+                        animation="border"
+                        style={{ height: "20px", width: "20px" }}
+                      />
+                    </>
+                  }
+                  title="IOT Cycle Details: "
+                  lineItems={iotCycleDetails}
+                  color="blue"
+                />
+              );
+            case SUCCESS:
+              return (
+                <CreationStatusPopup
+                  status="SUCCESS!"
+                  title="The following IOT Cycle was successfully created in Jira:"
+                  lineItems={iotCycleDetails}
+                  color="green"
+                  footerTextLink={`Click here to access the Jira Story (${newCreatedKey})`}
+                  footerLink={`${jiraTicketBaseURL}${newCreatedKey}`}
+                />
+              );
+            case ERROR:
+              return (
+                <CreationStatusPopup
+                  status="ERROR!"
+                  title="An error occured while creating an IOT Cycle with the following details:"
+                  lineItems={iotCycleDetails}
+                  color="red"
+                  footerTextNonLink="Please try again later"
+                />
+              );
+          }
+        },
+        closeOnClickOutside: creationStatus !== STARTED,
+        onClickOutside: () => {
+          if (creationStatus === SUCCESS) resetAll();
+          if (creationStatus === ERROR) resetCreationStatus();
+        },
+      });
+  }, [creationStatus]);
 
   return (
     <div className="jira-work-section-body">
@@ -148,10 +242,14 @@ const JiraIotCycleForm = ({
                 selectModel("");
                 getDevicesForVendor(vendor);
                 selectVendor(vendor);
+                selectPlannedDeliveryDate("");
+                selectPlannedStartDate("");
                 setResetValueAll(true);
               }}
               placeholder="Vendor"
-              disabled={vendorList.length === 0}
+              disabled={
+                vendorList.length === 0 || backendRequestStatus == STARTED
+              }
               initialValue={selectedVendor}
               resetValue={!modified}
             />
@@ -175,12 +273,20 @@ const JiraIotCycleForm = ({
                 selectRelease("");
                 resetReleasesForDevice();
                 selectModel(model);
-                getReleasesForDevice(getKeyForModel(devicesForVendor, model));
+                selectPlannedDeliveryDate("");
+                selectPlannedStartDate("");
+
+                // getReleasesForDevice(getKeyForModel(devicesForVendor, model));
+                getReleasesForDevice(
+                  _.find(devicesForVendor, { model: model })?.key
+                );
               }}
               placeholder={
                 backendRequestStatus === STARTED ? "Loading.." : "Device Model"
               }
-              disabled={devicesForVendor.length === 0}
+              disabled={
+                devicesForVendor.length === 0 || backendRequestStatus == STARTED
+              }
               initialValue={selectedModel}
               resetValue={resetValueAll}
               longItem={true}
@@ -227,6 +333,7 @@ const JiraIotCycleForm = ({
                 disabled={!selectedRelease}
                 onChange={(e) => {
                   selectPlannedStartDate(e);
+                  selectPlannedDeliveryDate("");
                 }}
                 selected={selectedPlannedStartDate}
                 dateFormat="dd/MM/yyyy"
@@ -261,7 +368,9 @@ const JiraIotCycleForm = ({
             !saveButton
             // selectedDeviceType === "" || creationStatus !== UNSTARTED
           }
-          onClick={() => {}}
+          onClick={() => {
+            setConfirmDetails(true);
+          }}
         >
           {"SAVE"}
         </Button>
