@@ -74,7 +74,6 @@ const LoginScreen = (props) => {
 };
 
 const mapStateToProps = (state) => {
-  console.log(state);
   return {
     common: state.common,
     jira: state.jira,

@@ -13,6 +13,8 @@
   padding-left: 20px;
 }
 .jira-options-button-container {
+  display: flex;
+  flex-direction: column;
 }
 .jira-options-button {
   margin-bottom: 10px;

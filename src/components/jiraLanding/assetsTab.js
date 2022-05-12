@@ -94,12 +94,23 @@ const JiraAssetsTab = ({
             variant: getButtonVariant("IOT Cycle"),
             className: "jira-options-button",
             size: "sm",
-            disabled: true,
+            disabled: false,
             key: "IOT Cycle",
             onClick: () => {
               handleOnClick("IOT Cycle");
             },
             label: "IOT Cycle",
+          },
+          {
+            variant: getButtonVariant("Defect"),
+            className: "jira-options-button",
+            size: "sm",
+            disabled: true,
+            key: "Defect",
+            onClick: () => {
+              handleOnClick("Defect");
+            },
+            label: "Defect",
           },
         ]}
       />

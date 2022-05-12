@@ -1,11 +1,55 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import ButtonsSection from "../buttonsSection";
+import { confirmAlert } from "react-confirm-alert";
+import Popup from "../../theme/popup";
 
 import "../../styling/jiraLanding.css";
 import "../../styling/commonStyles.css";
 
-const JiraOperationsTab = ({ selectedOperation, selectOperation }) => {
+const JiraOperationsTab = ({
+  selectedOperation,
+  selectOperation,
+  modified,
+  resetAll,
+}) => {
+  const [buttonClicked, setButtonClicked] = useState(selectedOperation);
+
+  useEffect(() => {
+    setButtonClicked(selectedOperation);
+  }, [selectedOperation]);
+
+  useEffect(() => {
+    if (modified) {
+      if (buttonClicked) {
+        if (buttonClicked !== selectedOperation) {
+          confirmAlert({
+            customUI: ({ onClose }) => {
+              return (
+                <Popup
+                  title="You have unsaved data!"
+                  message1="Your data will be lost if you navigate away from this page. Are you sure you want to continue?"
+                  onOk={() => {
+                    selectOperation(buttonClicked);
+                    resetAll();
+                    onClose();
+                  }}
+                  onCancel={() => {
+                    setButtonClicked("");
+                    onClose();
+                  }}
+                />
+              );
+            },
+            closeOnEscape: true,
+          });
+        }
+      }
+    } else {
+      selectOperation(buttonClicked);
+    }
+  }, [buttonClicked]);
+
   const getButtonVariant = (button) => {
     if (selectedOperation == "") {
       return "primary";
@@ -15,7 +59,7 @@ const JiraOperationsTab = ({ selectedOperation, selectOperation }) => {
   };
 
   const handleOnClick = (button) => {
-    selectOperation(button);
+    setButtonClicked(button);
   };
 
   return (

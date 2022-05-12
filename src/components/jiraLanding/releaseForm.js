@@ -37,10 +37,6 @@ const JiraReleaseForm = ({
   selectedTestingRequestType,
   selectTestingRequestType,
   selectedMarketName,
-  getDeviceTypes,
-  deviceTypes,
-  selectDeviceType,
-  selectedDeviceType,
   creationStatus,
   newCreatedKey,
   resetCreationStatus,
@@ -65,8 +61,12 @@ const JiraReleaseForm = ({
   createRelease,
   selectAsset,
   selectRelease,
+  selectDeviceType,
+  selectedDeviceType,
 
+  selectMarketName,
   getReleasesForDevice,
+  releasesForDevice,
   loginDetails,
   resetAll,
   backendRequestStatus,
@@ -90,7 +90,6 @@ const JiraReleaseForm = ({
     if (
       !selectedVendor ||
       !selectedModel ||
-      // !selectedTestingPriority ||
       !selectedTestingRequestType ||
       !selectedBaselineDate ||
       !selectedFunding ||
@@ -106,11 +105,22 @@ const JiraReleaseForm = ({
     }
 
     const date = new Date();
-    setEpicName(
-      `${selectedVendor} ${selectedModel}_${
-        selectedTestingRequestType.split("WDA_")[1]
-      }`
-    );
+    let localEpicName = `${selectedVendor} ${selectedModel}_`;
+    if (selectedTestingRequestType === "WDA_New Device Testing")
+      localEpicName = localEpicName + "WDA_New Device Testing";
+    else {
+      if (releasesForDevice.length > 0) {
+        localEpicName = localEpicName + "MR" + releasesForDevice.length;
+      } else {
+        localEpicName = localEpicName + "MR";
+      }
+    }
+    setEpicName(localEpicName);
+    // setEpicName(
+    //   `${selectedVendor} ${selectedModel}_${
+    //     selectedTestingRequestType.split("WDA_")[1]
+    //   }`
+    // );
     const initials = loginDetails.displayName
       .split(" ")
       .map((n) => n[0])
@@ -120,9 +130,12 @@ const JiraReleaseForm = ({
     }" project created`;
 
     setSummary(
-      `${date.getDate()}.${
-        date.getMonth() + 1
-      } ${initials}: ${selectedVendor} ${selectedModel} - ${summaryDescription}`
+      `${date.getDate().toString().padStart(2, "0")}.${(date.getMonth() + 1)
+        .toString()
+        .padStart(
+          2,
+          "0"
+        )} ${initials}: ${selectedVendor} ${selectedModel} - ${summaryDescription}`
     );
 
     setReleaseDetails([
@@ -132,7 +145,7 @@ const JiraReleaseForm = ({
       { fieldName: "Model", fieldValue: selectedModel },
       {
         fieldName: "Epic Name",
-        fieldValue: epicName,
+        fieldValue: localEpicName,
       },
       {
         fieldName: "Testing Request Type",
@@ -163,26 +176,27 @@ const JiraReleaseForm = ({
         fieldValue: selectedChangeDescription,
       },
     ]);
-    console.log(releaseDetails);
   }, [
     selectedVendor,
     selectedModel,
-    // selectedTestingPriority,
     selectedTestingRequestType,
     selectedBaselineDate,
     selectedFunding,
     selectedWDATestScope,
     selectedChangeDescription,
+    releasesForDevice,
+    // epicName,
   ]);
 
   useEffect(() => {
     if (confirmDetails) {
       confirmAlert({
         customUI: ({ onClose }) => {
+          const deviceModel = selectedModel.split("(")[0].trim();
           return (
             <CreationStatusPopup
               status="Confirm Release Details"
-              title="The following release will be created. Click OK to confirm"
+              title="The following Release will be created. Click OK to confirm"
               lineItems={releaseDetails}
               color="blue"
               onOk={() => {
@@ -202,6 +216,8 @@ const JiraReleaseForm = ({
                   funding: selectedFunding,
                   issueType: "release",
                   vendor: selectedVendor,
+                  deviceModel: deviceModel,
+                  deviceType: selectedDeviceType,
                 });
                 setConfirmDetails(false);
                 onClose();
@@ -255,29 +271,29 @@ const JiraReleaseForm = ({
               return (
                 <CreationStatusPopup
                   status="SUCCESS!"
-                  title="The following release was successfully created in Jira:"
+                  title="The following Release was successfully created in Jira:"
                   lineItems={releaseDetails}
                   color="green"
-                  footerTextLink="Click here to access the Jira ticket"
+                  footerTextLink={`Click here to access the Jira Epic (${newCreatedKey})`}
                   footerLink={`${jiraTicketBaseURL}${newCreatedKey}`}
-                  // footerTextNonLink="Would you like to create an IOT Cycle associated with this device?"
-                  // onOk={() => {
-                  // selectAsset("IOT Cycle");
-                  // selectModel(selectedModel);
-                  // resetCreationStatus();
-                  // onClose();
-                  // }}
-                  // okText="Create IOT Cycle"
-                  // onCancel={() => {
-                  //   onClose();
-                  // }}
+                  footerTextNonLink="Would you like to create an IOT Cycle associated with this Release?"
+                  onOk={() => {
+                    selectAsset("IOT Cycle");
+                    selectModel(selectedModel);
+                    resetCreationStatus();
+                    onClose();
+                  }}
+                  okText="Create IOT Cycle"
+                  onCancel={() => {
+                    onClose();
+                  }}
                 />
               );
             case ERROR:
               return (
                 <CreationStatusPopup
                   status="ERROR!"
-                  title="An error occured while creating a release with the following details:"
+                  title="An error occured while creating a Release with the following details:"
                   lineItems={releaseDetails}
                   color="red"
                   footerTextNonLink="Please try again later"
@@ -318,7 +334,9 @@ const JiraReleaseForm = ({
                 selectModel("");
               }}
               placeholder="Vendor"
-              disabled={vendorList.length === 0}
+              disabled={
+                vendorList.length === 0 || backendRequestStatus == STARTED
+              }
               initialValue={selectedVendor}
               resetValue={!modified}
             />
@@ -340,16 +358,35 @@ const JiraReleaseForm = ({
             <span className="item-selection-headings">Select Device Model</span>
             <DropdownMenu
               itemList={devicesForVendor.map((device) => {
-                return { name: device.model, value: device.model };
+                return {
+                  name: `${device.model} ${
+                    device.marketName === undefined
+                      ? ""
+                      : `(${device.marketName})`
+                  }`,
+                  value: device.model,
+                };
               })}
               onSelect={(model) => {
                 setResetValue(false);
                 selectModel(model);
+                let marketName = devicesForVendor.find((d) => {
+                  return d.model === model;
+                })?.marketName;
+
+                selectMarketName(marketName ?? "");
+                let deviceType = devicesForVendor.find((d) => {
+                  return d.model === model;
+                })?.type;
+                selectDeviceType(deviceType);
+                getReleasesForDevice(getKeyForModel(devicesForVendor, model));
               }}
               placeholder={
                 backendRequestStatus === STARTED ? "Loading.." : "Device Model"
               }
-              disabled={devicesForVendor.length === 0}
+              disabled={
+                devicesForVendor.length === 0 || backendRequestStatus == STARTED
+              }
               initialValue={selectedModel}
               resetValue={resetValue}
             />
@@ -369,31 +406,13 @@ const JiraReleaseForm = ({
                 selectChangeDescription("");
               }}
               placeholder="Testing Request Type"
-              disabled={devicesForVendor.length === 0}
+              disabled={
+                devicesForVendor.length === 0 || backendRequestStatus == STARTED
+              }
               initialValue={selectedTestingRequestType}
               resetValue={!modified}
             />
           </FormItem>
-
-          {
-            // <FormItem>
-            //          <span className="item-selection-headings">
-            //            Select Testing Priority
-            //          </span>
-            //          <DropdownMenu
-            //            itemList={testingPriorities.map((priority) => {
-            //              return { name: priority.name, value: priority.name };
-            //            })}
-            //            onSelect={(priority) => {
-            //              selectTestingPriority(priority);
-            //            }}
-            //            placeholder="Testing Priority"
-            //            disabled={devicesForVendor.length === 0}
-            //            initialValue={selectedTestingPriority}
-            //            resetValue={!modified}
-            //          />
-            //        </FormItem>
-          }
           <FormItem>
             <span className="item-selection-headings">
               Select WDA Test Scope
@@ -406,7 +425,9 @@ const JiraReleaseForm = ({
                 selectWDATestScope(scope);
               }}
               placeholder="WDA Test Scope"
-              disabled={devicesForVendor.length === 0}
+              disabled={
+                devicesForVendor.length === 0 || backendRequestStatus == STARTED
+              }
               initialValue={selectedWDATestScope}
               resetValue={!modified}
             />
@@ -423,7 +444,9 @@ const JiraReleaseForm = ({
                 selectFunding(fund);
               }}
               placeholder="Funding"
-              disabled={devicesForVendor.length === 0}
+              disabled={
+                devicesForVendor.length === 0 || backendRequestStatus == STARTED
+              }
               initialValue={selectedFunding}
               resetValue={!modified}
             />
@@ -434,11 +457,12 @@ const JiraReleaseForm = ({
             </span>
             <div className="customDatePickerWidth">
               <DatePicker
-                disabled={devicesForVendor.length === 0}
+                disabled={
+                  devicesForVendor.length === 0 ||
+                  backendRequestStatus == STARTED
+                }
                 onChange={(e) => {
                   selectBaselineDate(e);
-                  // selectBaselineDate(e.toISOString().split("T")[0]);
-                  // console.log(e.toISOString().split("T")[0]);
                 }}
                 selected={selectedBaselineDate}
                 dateFormat="dd/MM/yyyy"
@@ -453,19 +477,12 @@ const JiraReleaseForm = ({
           <div style={{ width: "50%", height: "100%" }}>
             <TextArea
               disabled={
-                devicesForVendor.length === 0 ||
-                selectedTestingRequestType === "WDA_New Device Testing"
+                devicesForVendor.length === 0 || backendRequestStatus == STARTED
               }
               maxLength={255}
-              textProcessor={(text) => {
-                if (text) return text.replace(/\n/g, "");
-              }}
               onBlur={selectChangeDescription}
               initialValue={selectedChangeDescription}
-              resetValue={
-                !modified ||
-                selectedTestingRequestType === "WDA_New Device Testing"
-              }
+              resetValue={!modified}
             />
           </div>
         </FormItem>

@@ -268,7 +268,6 @@ export const getWDATestScopes = (projectId, vendor) => async (
   dispatch,
   getState
 ) => {
-  console.log(projectId);
   let token = getState().common.token;
   dispatchData = {};
   try {
@@ -285,7 +284,6 @@ export const getWDATestScopes = (projectId, vendor) => async (
 };
 
 export const getFunding = (projectId, vendor) => async (dispatch, getState) => {
-  console.log(projectId);
   let token = getState().common.token;
   dispatchData = {};
   try {
@@ -301,25 +299,23 @@ export const getFunding = (projectId, vendor) => async (dispatch, getState) => {
   } catch (e) {}
 };
 
-export const createItem = (itemType, itemDetails, newUser) => async (
+export const createItem = (itemType, itemDetails, url) => async (
   dispatch,
   getState
 ) => {
   let token = getState().common.token;
   dispatchData = {};
+  let body = { issueDetails: itemDetails };
+  if (url) body = { ...body, url };
   try {
     dispatch({
       type: CREATE_ITEM,
     });
-    dispatchData = await backend.post(
-      itemType,
-      { issueDetails: itemDetails, newUser },
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
+    dispatchData = await backend.post(itemType, body, {
+      headers: {
+        Authorization: token,
+      },
+    });
 
     dispatch({
       type: CREATE_ITEM,

@@ -75,26 +75,24 @@ const JiraDeviceForm = ({
   }, [deviceTypes]);
 
   useEffect(() => {
+    let localSummary = `${selectedVendor} ${selectedModel} (${selectedMarketName})`;
     if (creationStatus !== UNSTARTED) resetCreationStatus();
     if (!selectedVendor || !selectedModel || !selectedDeviceType)
       setSaveButton(false);
     else {
       if (modulesAndIoTDevices.includes(selectedDeviceType)) {
         setSaveButton(true);
-        setSummary(`${selectedVendor} ${selectedModel} (N/A)`);
       } else {
         if (selectedMarketName) {
           setSaveButton(true);
-          setSummary(
-            `${selectedVendor} ${selectedModel} (${selectedMarketName})`
-          );
         } else {
           setSaveButton(false);
         }
       }
     }
+    setSummary(localSummary);
     setDeviceDetails([
-      { fieldName: "Summary", fieldValue: summary },
+      { fieldName: "Summary", fieldValue: localSummary },
 
       { fieldName: "Vendor", fieldValue: selectedVendor },
       { fieldName: "Model", fieldValue: selectedModel },
@@ -122,7 +120,7 @@ const JiraDeviceForm = ({
           return (
             <CreationStatusPopup
               status="Confirm Device Details"
-              title="The following device will be created. Click OK to confirm"
+              title="The following Device will be created. Click OK to confirm"
               lineItems={deviceDetails}
               color="blue"
               onOk={() => {
@@ -130,6 +128,8 @@ const JiraDeviceForm = ({
                   summary,
                   issueType: "device",
                   vendor: selectedVendor,
+                  modelMarketName: `${selectedModel} (${selectedMarketName})`,
+                  type: selectedDeviceType,
                 });
                 setConfirmDetails(false);
                 onClose();
@@ -176,12 +176,12 @@ const JiraDeviceForm = ({
               return (
                 <CreationStatusPopup
                   status="SUCCESS!"
-                  title="The following device was successfully created in Jira:"
+                  title="The following Device was successfully created in Jira:"
                   lineItems={deviceDetails}
                   color="green"
-                  footerTextLink="Click here to access the Jira ticket"
+                  footerTextLink={`Click here to access the Jira Capability (${newCreatedKey})`}
                   footerLink={`${jiraTicketBaseURL}${newCreatedKey}`}
-                  footerTextNonLink="Would you like to create a Release associated with this device?"
+                  footerTextNonLink="Would you like to create a Release associated with this Device?"
                   onOk={() => {
                     selectAsset("Release");
                     selectModel(`${selectedModel} (${selectedMarketName})`);
@@ -198,7 +198,7 @@ const JiraDeviceForm = ({
               return (
                 <CreationStatusPopup
                   status="ERROR!"
-                  title="An error occured while creating a device with the following details:"
+                  title="An error occured while creating a Device with the following details:"
                   lineItems={deviceDetails}
                   color="red"
                   footerTextNonLink="Please try again later"
@@ -238,9 +238,10 @@ const JiraDeviceForm = ({
             })}
             onSelect={(device) => {
               selectDeviceType(device);
-              if (modulesAndIoTDevices.includes(device))
-                selectMarketName("N/A");
-              else selectMarketName("");
+              selectMarketName("");
+              // if (modulesAndIoTDevices.includes(device))
+              //   selectMarketName("N/A");
+              // else selectMarketName("");
             }}
             placeholder={selectedModel !== "" ? "Device Type" : ""}
             disabled={selectedVendor === ""}

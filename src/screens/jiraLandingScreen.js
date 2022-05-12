@@ -66,6 +66,7 @@ const JiraLandingScreen = (props) => {
       <JiraOperationsTab
         selectOperation={props.selectOperation}
         selectedOperation={props.jira.selectedOperation}
+        resetAll={props.resetAll}
         modified={props.jira.modified}
       />
       <JiraAssetsTab
@@ -98,14 +99,11 @@ const JiraLandingScreen = (props) => {
         selectDeviceType={props.selectDeviceType}
         selectedDeviceType={props.jira.selectedDeviceType}
         createDevice={(fields) => {
-          props.createItem(
-            "device",
-            {
-              ...fields,
-              projectId: props.jira.projectId,
-            },
-            props.common.loginDetails.name
-          );
+          props.createItem("device", {
+            ...fields,
+            projectId: props.jira.projectId,
+            reporter: props.common.loginDetails.name,
+          });
         }}
         creationStatus={props.jira.creationStatus}
         newCreatedKey={props.jira.newCreatedKey}
@@ -145,14 +143,11 @@ const JiraLandingScreen = (props) => {
         selectedChangeDescription={props.jira.selectedChangeDescription}
         loginDetails={props.common.loginDetails}
         createRelease={(fields) => {
-          props.createItem(
-            "release",
-            {
-              ...fields,
-              projectId: props.jira.projectId,
-            },
-            props.common.loginDetails.name
-          );
+          props.createItem("release", {
+            ...fields,
+            projectId: props.jira.projectId,
+            reporter: props.common.loginDetails.name,
+          });
         }}
         selectPlannedStartDate={props.selectPlannedStartDate}
         selectPlannedDeliveryDate={props.selectPlannedDeliveryDate}
@@ -166,13 +161,21 @@ const JiraLandingScreen = (props) => {
         selectedRelease={props.jira.selectedRelease}
         resetReleasesForDevice={props.resetReleasesForDevice}
         createIOTCycle={(fields) => {
+          props.createItem("iotCycle", {
+            ...fields,
+            projectId: props.jira.projectId,
+            reporter: props.common.loginDetails.name,
+          });
+        }}
+        createDefect={(fields, url) => {
           props.createItem(
-            "iotCycle",
+            "defect",
             {
               ...fields,
               projectId: props.jira.projectId,
+              reporter: props.common.loginDetails.name,
             },
-            props.common.loginDetails.name
+            url
           );
         }}
         backendRequestStatus={props.jira.backendRequestStatus}

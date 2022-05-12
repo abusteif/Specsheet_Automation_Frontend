@@ -30,7 +30,6 @@ const DropdownMenu = ({
         placeholder={placeholder}
         value={value}
         onChange={(value) => {
-          console.log(value);
           onSelect(value);
           setValue(value);
         }}
