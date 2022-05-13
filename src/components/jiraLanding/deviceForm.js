@@ -184,7 +184,7 @@ const JiraDeviceForm = ({
                   footerTextNonLink="Would you like to create a Release associated with this Device?"
                   onOk={() => {
                     selectAsset("Release");
-                    selectModel(`${selectedModel} (${selectedMarketName})`);
+                    selectModel(selectedModel);
                     resetCreationStatus();
                     onClose();
                   }}
