@@ -220,22 +220,30 @@ export const jiraReducer = (state = defaultState, action) => {
         };
       let newDeviceList = [];
       let model = null;
+      let marketName = "";
       for (var device in action.payload.data) {
-        let model = action.payload.data[device].modelMarketName
-          .split("(")[0]
-          .trim();
-        let marketName = action.payload.data[device].modelMarketName
-          .split("(")[1]
-          ?.split(")")[0]
-          .trim();
-        // var sp = action.payload.data[device].summary.split(" ");
-        // for (var i = 4; i > 0; i--) {
-        //   if (state.vendors.find((x) => x.name === sp.slice(0, i).join(" "))) {
-        //     model = sp.slice(i).join(" ");
-        //     break;
-        //   }
-        //   if (!model) model = action.payload.data[device].summary;
-        // }
+        if (!action.payload.data[device].modelMarketName) {
+          var sp = action.payload.data[device].summary.split(" ");
+          for (var i = 4; i > 0; i--) {
+            if (
+              state.vendors.find((x) => x.name === sp.slice(0, i).join(" "))
+            ) {
+              let modelMarketName = sp.slice(i).join(" ");
+              model = modelMarketName.split("(")[0].trim();
+              marketName = modelMarketName.split("(")[1]?.split(")")[0].trim();
+              break;
+            }
+            if (!model) model = action.payload.data[device].summary;
+          }
+        } else {
+          model = action.payload.data[device].modelMarketName
+            .split("(")[0]
+            .trim();
+          marketName = action.payload.data[device].modelMarketName
+            ?.split("(")[1]
+            ?.split(")")[0]
+            .trim();
+        }
         let { key, type, summary } = action.payload.data[device];
         newDeviceList = [
           ...newDeviceList,
@@ -248,7 +256,6 @@ export const jiraReducer = (state = defaultState, action) => {
           },
         ];
       }
-      console.log(newDeviceList);
       return {
         ...state,
         devicesForVendor: newDeviceList,
