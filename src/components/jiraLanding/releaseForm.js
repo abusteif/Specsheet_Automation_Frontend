@@ -63,7 +63,8 @@ const JiraReleaseForm = ({
   selectRelease,
   selectDeviceType,
   selectedDeviceType,
-
+  getDeviceTypes,
+  deviceTypes,
   selectMarketName,
   getReleasesForDevice,
   releasesForDevice,
@@ -79,11 +80,9 @@ const JiraReleaseForm = ({
   const [confirmDetails, setConfirmDetails] = useState(false);
   const [releaseDetails, setReleaseDetails] = useState([]);
 
-  // useEffect(() => {
-  //   return () => {
-  //     resetAll();
-  //   };
-  // }, []);
+  useEffect(() => {
+    if (deviceTypes.length === 0) getDeviceTypes();
+  }, [deviceTypes]);
 
   useEffect(() => {
     if (creationStatus !== UNSTARTED) resetCreationStatus();
@@ -332,6 +331,7 @@ const JiraReleaseForm = ({
                 selectVendor(vendor);
                 setResetValue(true);
                 selectModel("");
+                selectDeviceType("");
               }}
               placeholder="Vendor"
               disabled={
@@ -391,6 +391,32 @@ const JiraReleaseForm = ({
               resetValue={resetValue}
             />
           </FormItem>
+          {!devicesForVendor.find((d) => {
+            return d.model === selectedModel;
+          })?.type && (
+            <FormItem>
+              <span className="item-selection-headings">
+                Select Device Type
+              </span>
+              <DropdownMenu
+                itemList={deviceTypes.map((deviceType) => {
+                  return { name: deviceType.name, value: deviceType.name };
+                })}
+                onSelect={(device) => {
+                  selectDeviceType(device);
+                }}
+                placeholder={
+                  backendRequestStatus === STARTED ? "Loading.." : "Device Type"
+                }
+                disabled={
+                  devicesForVendor.length === 0 ||
+                  backendRequestStatus == STARTED
+                }
+                initialValue={selectedDeviceType}
+                resetValue={selectedDeviceType === ""}
+              />
+            </FormItem>
+          )}
         </LongFormItem>
         <LongFormItem>
           <FormItem>
