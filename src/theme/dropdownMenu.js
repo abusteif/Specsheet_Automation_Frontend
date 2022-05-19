@@ -16,9 +16,13 @@ const DropdownMenu = ({
   resetValue,
 }) => {
   const [value, setValue] = useState(initialValue);
+
   useEffect(() => {
     if (resetValue) setValue("");
   }, [resetValue]);
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
   return (
     <div className={longItem ? "long-search" : ""}>
       <SelectSearch

@@ -6,10 +6,19 @@ import Popup from "../../theme/popup";
 
 import "../../styling/jiraLanding.css";
 import "../../styling/commonStyles.css";
+
+import {
+  SUCCESS,
+  ERROR,
+  UNSTARTED,
+  STARTED,
+} from "../../configs/configurations";
+
 const JiraAssetsTab = ({
   selectedOperation,
   selectAsset,
   selectedAsset,
+  backendRequestStatus,
   modified,
   resetAll,
 }) => {
@@ -49,11 +58,23 @@ const JiraAssetsTab = ({
       selectAsset(buttonClicked);
     }
   }, [buttonClicked]);
+
   const getButtonVariant = (button) => {
+    let variant;
+    switch (selectedOperation) {
+      case "Create":
+        variant = "primary";
+        break;
+      case "Modify":
+        variant = "info";
+        break;
+      case "Delete":
+        variant = "danger";
+    }
     if (selectedAsset == "") {
-      return "primary";
+      return variant;
     } else {
-      return button == selectedAsset ? "primary" : "secondary";
+      return button == selectedAsset ? variant : "secondary";
     }
   };
 
@@ -72,7 +93,7 @@ const JiraAssetsTab = ({
             variant: getButtonVariant("Device"),
             className: "jira-options-button",
             size: "sm",
-            disabled: false,
+            disabled: backendRequestStatus === STARTED,
             key: "Device",
             onClick: () => {
               setButtonClicked("Device");
@@ -83,7 +104,9 @@ const JiraAssetsTab = ({
             variant: getButtonVariant("Release"),
             className: "jira-options-button",
             size: "sm",
-            disabled: false,
+            disabled:
+              backendRequestStatus === STARTED ||
+              selectedOperation === "Modify",
             key: "Release",
             onClick: () => {
               handleOnClick("Release");
@@ -94,7 +117,9 @@ const JiraAssetsTab = ({
             variant: getButtonVariant("IOT Cycle"),
             className: "jira-options-button",
             size: "sm",
-            disabled: false,
+            disabled:
+              backendRequestStatus === STARTED ||
+              selectedOperation === "Modify",
             key: "IOT Cycle",
             onClick: () => {
               handleOnClick("IOT Cycle");

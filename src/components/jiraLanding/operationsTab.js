@@ -7,9 +7,18 @@ import Popup from "../../theme/popup";
 import "../../styling/jiraLanding.css";
 import "../../styling/commonStyles.css";
 
+import {
+  SUCCESS,
+  ERROR,
+  UNSTARTED,
+  STARTED,
+} from "../../configs/configurations";
+
 const JiraOperationsTab = ({
   selectedOperation,
   selectOperation,
+  selectAsset,
+  backendRequestStatus,
   modified,
   resetAll,
 }) => {
@@ -31,6 +40,7 @@ const JiraOperationsTab = ({
                   message1="Your data will be lost if you navigate away from this page. Are you sure you want to continue?"
                   onOk={() => {
                     selectOperation(buttonClicked);
+                    selectAsset("");
                     resetAll();
                     onClose();
                   }}
@@ -47,14 +57,26 @@ const JiraOperationsTab = ({
       }
     } else {
       selectOperation(buttonClicked);
+      selectAsset("");
     }
   }, [buttonClicked]);
 
   const getButtonVariant = (button) => {
+    let variant;
+    switch (button) {
+      case "Create":
+        variant = "primary";
+        break;
+      case "Modify":
+        variant = "info";
+        break;
+      case "Delete":
+        variant = "danger";
+    }
     if (selectedOperation == "") {
-      return "primary";
+      return variant;
     } else {
-      return button == selectedOperation ? "primary" : "secondary";
+      return button == selectedOperation ? variant : "secondary";
     }
   };
 
@@ -73,7 +95,7 @@ const JiraOperationsTab = ({
             variant: getButtonVariant("Create"),
             className: "jira-options-button",
             size: "sm",
-            disabled: false,
+            disabled: backendRequestStatus === STARTED,
             key: "Create",
             onClick: () => {
               handleOnClick("Create");
@@ -84,7 +106,7 @@ const JiraOperationsTab = ({
             variant: getButtonVariant("Modify"),
             className: "jira-options-button",
             size: "sm",
-            disabled: true,
+            disabled: backendRequestStatus === STARTED,
             key: "Modify",
             onClick: () => {
               handleOnClick("Modify");

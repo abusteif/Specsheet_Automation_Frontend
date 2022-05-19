@@ -10,6 +10,7 @@ import {
   GET_DEVICES_FOR_VENDOR,
   GET_DEVICE_TYPES,
   CREATE_ITEM,
+  UPDATE_ITEM,
   RESET_CREATION_STATUS,
   RESET_ALL,
   RESET_DEVICES_FOR_VENDOR_LIST,
@@ -23,12 +24,12 @@ import {
   SELECT_FUNDING,
   SELECT_ACTUAL_DATE,
   SELECT_BASELINE_DATE,
-  SELECT_BAU_NUMBER,
   SELECT_CHANGE_DESCRIPTION,
   GET_RELEASES_FOR_DEVICE,
   SELECT_PLANNED_DELIVERY_DATE,
   SELECT_PLANNED_START_DATE,
   SELECT_RELEASE,
+  SET_MODIFIED,
   RESET_RELEASES_FOR_DEVICE,
 } from "../actions/jira-actions";
 
@@ -52,7 +53,6 @@ const initialState = {
   selectedFunding: "",
   selectedActualDate: null,
   selectedBaselineDate: null,
-  selectedBAUNumber: "",
   selectedChangeDescription: "",
   backendRequestStatus: UNSTARTED,
   selectedRelease: "",
@@ -179,12 +179,6 @@ export const jiraReducer = (state = defaultState, action) => {
         selectedChangeDescription: action.payload,
       };
 
-    case SELECT_BAU_NUMBER:
-      return {
-        ...state,
-        selectedBAUNumber: action.payload,
-      };
-
     case GET_DEVICE_TYPES:
       return {
         ...state,
@@ -292,6 +286,28 @@ export const jiraReducer = (state = defaultState, action) => {
           };
         }
       }
+
+    case UPDATE_ITEM:
+      if (state.creationStatus === UNSTARTED)
+        return { ...state, creationStatus: STARTED };
+      else {
+        if (action.payload.dispatchData.status === 204)
+          return {
+            ...state,
+            creationStatus: SUCCESS,
+            newCreatedKey: action.payload.dispatchData.data.key,
+          };
+        else {
+          return {
+            ...state,
+            creationStatus: ERROR,
+          };
+        }
+      }
+
+    case SET_MODIFIED: {
+      return { ...state, modified: true };
+    }
 
     case RESET_CREATION_STATUS: {
       return { ...state, creationStatus: UNSTARTED, newCreatedKey: "" };

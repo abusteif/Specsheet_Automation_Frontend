@@ -11,6 +11,7 @@ export const SELECT_MARKET_NAME = "jira/SELECT_MARKET_NAME";
 export const SELECT_DEVICE_TYPE = "jira/SELECT_DEVICE_TYPE";
 export const GET_DEVICE_TYPES = "jira/GET_DEVICE_TYPES";
 export const CREATE_ITEM = "jira/CREATE_ITEM";
+export const UPDATE_ITEM = "jira/UPDATE_ITEM";
 export const RESET_CREATION_STATUS = "jira/RESET_CREATION_STATUS";
 export const GET_DEVICES_FOR_VENDOR = "jira/GET_DEVICES_FOR_VENDOR";
 export const RESET_DEVICES_FOR_VENDOR_LIST =
@@ -25,13 +26,13 @@ export const GET_FUNDING = "jira/GET_FUNDING";
 export const SELECT_FUNDING = "jira/SELECT_FUNDING";
 export const SELECT_BASELINE_DATE = "jira/SELECT_BASELINE_DATE";
 export const SELECT_ACTUAL_DATE = "jira/SELECT_ACTUAL_DATE";
-export const SELECT_BAU_NUMBER = "jira/SELECT_BAU_NUMBER";
 export const SELECT_CHANGE_DESCRIPTION = "jira/SELECT_CHANGE_DESCRIPTION";
 export const GET_RELEASES_FOR_DEVICE = "jira/GET_RELEASES_FOR_DEVICE";
 export const SELECT_PLANNED_DELIVERY_DATE = "jira/SELECT_PLANNED_DELIVERY_DATE";
 export const SELECT_PLANNED_START_DATE = "jira/SELECT_PLANNED_START_DATE";
 export const SELECT_RELEASE = "jira/SELECT_RELEASE";
 export const RESET_RELEASES_FOR_DEVICE = "jira/RESET_RELEASES_FOR_DEVICE";
+export const SET_MODIFIED = "jira/SET_MODIFIED";
 
 let dispatchData;
 
@@ -95,10 +96,6 @@ export const selectPlannedDeliveryDate = (date) => {
   return { type: SELECT_PLANNED_DELIVERY_DATE, payload: date };
 };
 
-export const selectBAUNumber = (num) => {
-  return { type: SELECT_BAU_NUMBER, payload: num };
-};
-
 export const selectRelease = (release) => {
   return { type: SELECT_RELEASE, payload: release };
 };
@@ -117,6 +114,10 @@ export const resetCreationStatus = () => {
 
 export const resetDevicesForVendorList = () => {
   return { type: RESET_DEVICES_FOR_VENDOR_LIST };
+};
+
+export const setModified = () => {
+  return { type: SET_MODIFIED };
 };
 
 export const initialiseJira = (forceUpdate, projectId) => async (
@@ -220,24 +221,31 @@ export const getDevicesForVendor = (projectId, vendor) => async (
   } catch (e) {}
 };
 
-export const getReleasesForDevice = (projectId, device) => async (
-  dispatch,
-  getState
-) => {
+export const getReleasesForDevice = (
+  projectId,
+  device,
+  extraFieldsToReturn
+) => async (dispatch, getState) => {
   let token = getState().common.token;
   dispatch({
     type: GET_RELEASES_FOR_DEVICE,
   });
   dispatchData = {};
   try {
-    dispatchData = await backend.get(
-      `/releasesForDevice/${projectId}/${device}`,
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
+    dispatchData = extraFieldsToReturn
+      ? await backend.get(`/releasesForDevice/${projectId}/${device}`, {
+          headers: {
+            Authorization: token,
+          },
+          params: {
+            extraFieldsToReturn: extraFieldsToReturn.join(","),
+          },
+        })
+      : await backend.get(`/releasesForDevice/${projectId}/${device}`, {
+          headers: {
+            Authorization: token,
+          },
+        });
     dispatch({
       type: GET_RELEASES_FOR_DEVICE,
       payload: dispatchData,
@@ -327,6 +335,42 @@ export const createItem = (itemType, itemDetails, url) => async (
     if (e.response)
       dispatch({
         type: CREATE_ITEM,
+        payload: {
+          dispatchData: {
+            status: e.response.status,
+          },
+        },
+      });
+  }
+};
+
+export const updateItem = (itemType, itemDetails, jiraTicketId) => async (
+  dispatch,
+  getState
+) => {
+  let token = getState().common.token;
+  dispatchData = {};
+  let body = { issueDetails: itemDetails, jiraTicketId };
+  try {
+    dispatch({
+      type: UPDATE_ITEM,
+    });
+    dispatchData = await backend.put(itemType, body, {
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    dispatch({
+      type: UPDATE_ITEM,
+      payload: {
+        dispatchData,
+      },
+    });
+  } catch (e) {
+    if (e.response)
+      dispatch({
+        type: UPDATE_ITEM,
         payload: {
           dispatchData: {
             status: e.response.status,

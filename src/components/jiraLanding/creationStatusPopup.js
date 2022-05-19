@@ -27,6 +27,8 @@ const CreationStatusPopup = ({
           <KeyValueLine
             keyProp={lineItem.fieldName}
             valueProp={lineItem.fieldValue}
+            keyColor={lineItem.keyColor}
+            valueColor={lineItem.valueColor}
             key={lineItem.fieldName}
           />
         );

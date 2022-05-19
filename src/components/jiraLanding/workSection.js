@@ -2,8 +2,10 @@ import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import Spinner from "react-bootstrap/Spinner";
 
-import JiraDeviceForm from "./deviceForm";
+import JiraDeviceCreateForm from "./deviceCreateForm";
+import JiraDeviceEditForm from "./deviceEditForm";
 import JiraReleaseForm from "./releaseForm";
+import JiraReleaseEditForm from "./releaseEditForm";
 import JiraIotCycleForm from "./iotCycleForm";
 import JiraDefectForm from "./defectForm";
 
@@ -30,6 +32,7 @@ const JiraWorkSection = ({
   selectDeviceType,
   selectedDeviceType,
   createDevice,
+  updateDevice,
   creationStatus,
   newCreatedKey,
   testingRequestTypes,
@@ -54,8 +57,6 @@ const JiraWorkSection = ({
   selectActualDate,
   selectedBaselineDate,
   selectedActualDate,
-  selectBAUNumber,
-  selectedBAUNumber,
   selectChangeDescription,
   selectedChangeDescription,
   selectPlannedStartDate,
@@ -74,19 +75,22 @@ const JiraWorkSection = ({
   ready,
   backendRequestStatus,
   modified,
+  setModified,
   resetAll,
 }) => {
   useEffect(() => {}, [ready, selectedOperation, selectedAsset]);
+
+  useEffect(() => {
+    if (deviceTypes.length === 0) getDeviceTypes();
+  }, [deviceTypes]);
+
   useEffect(() => {
     if (vendorList.length === 0) getVendors();
   }, [vendorList]);
+
   useEffect(() => {
     if (testingRequestTypes.length === 0) getTestingRequestTypes();
   }, [testingRequestTypes]);
-
-  // useEffect(() => {
-  //   if (testingPriorities.length === 0) getTestingPriorities();
-  // }, [testingPriorities]);
 
   useEffect(() => {
     if (wdaTestScopes.length === 0) getWDATestScopes();
@@ -99,8 +103,8 @@ const JiraWorkSection = ({
   const helper = () => {
     switch (selectedAsset) {
       case "Device":
-        return (
-          <JiraDeviceForm
+        return selectedOperation === "Create" ? (
+          <JiraDeviceCreateForm
             getVendors={getVendors}
             vendorList={vendorList}
             selectAsset={selectAsset}
@@ -118,13 +122,30 @@ const JiraWorkSection = ({
             creationStatus={creationStatus}
             newCreatedKey={newCreatedKey}
             getDevicesForVendor={getDevicesForVendor}
+            devicesForVendor={devicesForVendor}
             modified={modified}
             resetCreationStatus={resetCreationStatus}
+            backendRequestStatus={backendRequestStatus}
+            resetAll={resetAll}
+          />
+        ) : (
+          <JiraDeviceEditForm
+            getVendors={getVendors}
+            vendorList={vendorList}
+            getDeviceTypes={getDeviceTypes}
+            deviceTypes={deviceTypes}
+            creationStatus={creationStatus}
+            getDevicesForVendor={getDevicesForVendor}
+            devicesForVendor={devicesForVendor}
+            updateDevice={updateDevice}
+            resetCreationStatus={resetCreationStatus}
+            backendRequestStatus={backendRequestStatus}
+            setModified={setModified}
             resetAll={resetAll}
           />
         );
       case "Release":
-        return (
+        return selectedOperation === "Create" ? (
           <JiraReleaseForm
             vendorList={vendorList}
             getDevicesForVendor={getDevicesForVendor}
@@ -133,6 +154,7 @@ const JiraWorkSection = ({
             selectedVendor={selectedVendor}
             selectModel={selectModel}
             selectedModel={selectedModel}
+            selectedMarketName={selectedMarketName}
             getDeviceTypes={getDeviceTypes}
             deviceTypes={deviceTypes}
             selectDeviceType={selectDeviceType}
@@ -154,8 +176,6 @@ const JiraWorkSection = ({
             selectActualDate={selectActualDate}
             selectedBaselineDate={selectedBaselineDate}
             selectedActualDate={selectedActualDate}
-            selectBAUNumberselectBAUNumber
-            selectedBAUNumber={selectedBAUNumber}
             selectChangeDescription={selectChangeDescription}
             selectedChangeDescription={selectedChangeDescription}
             getReleasesForDevice={getReleasesForDevice}
@@ -169,7 +189,28 @@ const JiraWorkSection = ({
             backendRequestStatus={backendRequestStatus}
             resetAll={resetAll}
           />
+        ) : (
+          <JiraReleaseEditForm
+            vendorList={vendorList}
+            getDevicesForVendor={getDevicesForVendor}
+            devicesForVendor={devicesForVendor}
+            deviceTypes={deviceTypes}
+            testingRequestTypes={testingRequestTypes}
+            wdaTestScopes={wdaTestScopes}
+            fundingList={funding}
+            modified={modified}
+            creationStatus={creationStatus}
+            resetCreationStatus={resetCreationStatus}
+            getReleasesForDevice={getReleasesForDevice}
+            releasesForDevice={releasesForDevice}
+            newCreatedKey={newCreatedKey}
+            loginDetails={loginDetails}
+            resetDevicesForVendorList={resetDevicesForVendorList}
+            backendRequestStatus={backendRequestStatus}
+            resetAll={resetAll}
+          />
         );
+
       case "IOT Cycle":
         return (
           <JiraIotCycleForm
