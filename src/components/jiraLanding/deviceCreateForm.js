@@ -18,7 +18,7 @@ import {
   STARTED,
 } from "../../configs/configurations";
 import { jiraTicketBaseURL } from "../../configs/staticData";
-const JiraDeviceForm = ({
+const JiraDeviceCreateForm = ({
   getVendors,
   vendorList,
   selectVendor,
@@ -61,14 +61,6 @@ const JiraDeviceForm = ({
       setMarketNameCheckBox(false);
     }
   };
-
-  // useEffect(() => {
-  //   console.log("reset");
-  //   return () => {
-  //     console.log("resetting all");
-  //     resetAll();
-  //   };
-  // }, []);
 
   useEffect(() => {
     if (deviceTypes.length === 0) getDeviceTypes();
@@ -239,9 +231,6 @@ const JiraDeviceForm = ({
             onSelect={(device) => {
               selectDeviceType(device);
               selectMarketName("");
-              // if (modulesAndIoTDevices.includes(device))
-              //   selectMarketName("N/A");
-              // else selectMarketName("");
             }}
             placeholder={selectedModel !== "" ? "Device Type" : ""}
             disabled={selectedVendor === ""}
@@ -313,19 +302,8 @@ const JiraDeviceForm = ({
           className="jira-work-section-buttons"
           size="lg"
           key={"save"}
-          disabled={
-            !saveButton
-            // selectedDeviceType === "" || creationStatus !== UNSTARTED
-          }
+          disabled={!saveButton}
           onClick={() => {
-            // let summary = `${selectedVendor} ${selectedModel} ${
-            //   selectedMarketName ? `(${selectedMarketName})` : ""
-            // }`;
-            // createDevice({
-            //   summary,
-            //   issueType: "device",
-            //   vendor: selectedVendor,
-            // });
             setConfirmDetails(true);
           }}
         >
@@ -346,4 +324,4 @@ const JiraDeviceForm = ({
   );
 };
 
-export default JiraDeviceForm;
+export default JiraDeviceCreateForm;

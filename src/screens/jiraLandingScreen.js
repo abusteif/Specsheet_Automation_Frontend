@@ -21,24 +21,23 @@ import {
   getDeviceTypes,
   getDevicesForVendor,
   createItem,
+  updateItem,
   resetCreationStatus,
   getTestingRequestTypes,
   selectTestingRequestType,
-  // getTestingPriorities,
-  // selectTestingPriority,
   getWDATestScopes,
   selectWDATestScope,
   getFunding,
   selectFunding,
   selectBaselineDate,
   selectActualDate,
-  selectBAUNumber,
   selectChangeDescription,
   selectPlannedStartDate,
   selectPlannedDeliveryDate,
   getReleasesForDevice,
   selectRelease,
   resetReleasesForDevice,
+  setModified,
   resetAll,
   resetDevicesForVendorList,
 } from "../actions/jira-actions";
@@ -66,12 +65,15 @@ const JiraLandingScreen = (props) => {
       <JiraOperationsTab
         selectOperation={props.selectOperation}
         selectedOperation={props.jira.selectedOperation}
+        selectAsset={props.selectAsset}
+        backendRequestStatus={props.jira.backendRequestStatus}
         resetAll={props.resetAll}
         modified={props.jira.modified}
       />
       <JiraAssetsTab
         selectedOperation={props.jira.selectedOperation}
         selectAsset={props.selectAsset}
+        backendRequestStatus={props.jira.backendRequestStatus}
         selectedAsset={props.jira.selectedAsset}
         resetAll={props.resetAll}
         modified={props.jira.modified}
@@ -105,6 +107,16 @@ const JiraLandingScreen = (props) => {
             reporter: props.common.loginDetails.name,
           });
         }}
+        updateDevice={(fields, jiraTicketId) => {
+          props.updateItem(
+            "device",
+            {
+              ...fields,
+              projectId: props.jira.projectId,
+            },
+            jiraTicketId
+          );
+        }}
         creationStatus={props.jira.creationStatus}
         newCreatedKey={props.jira.newCreatedKey}
         getTestingRequestTypes={() => {
@@ -115,12 +127,6 @@ const JiraLandingScreen = (props) => {
         testingRequestTypes={props.jira.testingRequestTypes}
         resetCreationStatus={props.resetCreationStatus}
         resetDevicesForVendorList={props.resetDevicesForVendorList}
-        // getTestingPriorities={() => {
-        //   props.getTestingPriorities(props.jira.projectId);
-        // }}
-        // testingPriorities={props.jira.testingPriorities}
-        // selectTestingPriority={props.selectTestingPriority}
-        // selectedTestingPriority={props.jira.selectedTestingPriority}
         getWDATestScopes={() => {
           props.getWDATestScopes(props.jira.projectId);
         }}
@@ -137,8 +143,6 @@ const JiraLandingScreen = (props) => {
         selectedBaselineDate={props.jira.selectedBaselineDate}
         selectActualDate={props.selectActualDate}
         selectedActualDate={props.jira.selectedActualDate}
-        selectBAUNumber={props.selectBAUNumber}
-        selectedBAUNumber={props.jira.selectedBAUNumber}
         selectChangeDescription={props.selectChangeDescription}
         selectedChangeDescription={props.jira.selectedChangeDescription}
         loginDetails={props.common.loginDetails}
@@ -153,8 +157,12 @@ const JiraLandingScreen = (props) => {
         selectPlannedDeliveryDate={props.selectPlannedDeliveryDate}
         selectedPlannedStartDate={props.jira.selectedPlannedStartDate}
         selectedPlannedDeliveryDate={props.jira.selectedPlannedDeliveryDate}
-        getReleasesForDevice={(device) => {
-          props.getReleasesForDevice(props.jira.projectId, device);
+        getReleasesForDevice={(device, extraFieldsToReturn) => {
+          props.getReleasesForDevice(
+            props.jira.projectId,
+            device,
+            extraFieldsToReturn
+          );
         }}
         releasesForDevice={props.jira.releasesForDevice}
         selectRelease={props.selectRelease}
@@ -179,6 +187,7 @@ const JiraLandingScreen = (props) => {
           );
         }}
         backendRequestStatus={props.jira.backendRequestStatus}
+        setModified={props.setModified}
         modified={props.jira.modified}
         resetAll={props.resetAll}
       />
@@ -208,13 +217,12 @@ export default connect(mapStateToProps, {
   resetAll,
   getProjectId,
   createItem,
+  updateItem,
   resetCreationStatus,
   resetDevicesForVendorList,
   getTestingRequestTypes,
   selectTestingRequestType,
-  // getTestingPriorities,
   getDeviceTypes,
-  // selectTestingPriority,
   getWDATestScopes,
   selectWDATestScope,
   getFunding,
@@ -223,11 +231,10 @@ export default connect(mapStateToProps, {
   selectActualDate,
   selectPlannedStartDate,
   selectPlannedDeliveryDate,
-  selectBAUNumber,
   selectChangeDescription,
   getReleasesForDevice,
   resetReleasesForDevice,
   selectRelease,
-
+  setModified,
   logout,
 })(JiraLandingScreen);
