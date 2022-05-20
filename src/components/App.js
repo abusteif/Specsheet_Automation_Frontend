@@ -12,6 +12,7 @@ import ReportingScreen from "../screens/reportingScreen";
 import AutomationScreen from "../screens/automationScreen";
 import ComparisonScreen from "../screens/comparisonScreen";
 import JiraLandingScreen from "../screens/jiraLandingScreen";
+import EpicCapabilityMapping from "../screens/epicCapabilityMapping";
 
 import "../styling/homeScreen.css";
 import "../styling/app.css";
@@ -34,6 +35,11 @@ const App = (props) => {
           <Route path="/automation" exact component={AutomationScreen} />
           <Route path="/comparison" exact component={ComparisonScreen} />
           <Route path="/jira" exact component={JiraLandingScreen} />
+          <Route
+            path="/epic-capability-mapping"
+            exact
+            component={EpicCapabilityMapping}
+          />
         </Switch>
       </div>
     </Router>

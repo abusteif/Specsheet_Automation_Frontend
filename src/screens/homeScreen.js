@@ -44,6 +44,7 @@ const HomeScreen = (props) => {
             <div style={{ marginLeft: 20 }}> Jira </div>
           </Button>
         </Link>
+
         <Link
           to="/automation"
           style={{ color: "inherit", textDecoration: "inherit" }}
@@ -51,6 +52,15 @@ const HomeScreen = (props) => {
           <Button className="home-screen-button">
             <GiBulldozer size={50} />
             <div style={{ marginLeft: 20 }}> Automation </div>
+          </Button>
+        </Link>
+
+        <Link
+          to="/epic-capability-mapping"
+          style={{ color: "inherit", textDecoration: "inherit" }}
+        >
+          <Button className="home-screen-button">
+            <div style={{ marginLeft: 20 }}> Epic Capability Mapping </div>
           </Button>
         </Link>
       </div>

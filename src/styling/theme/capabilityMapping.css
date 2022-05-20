@@ -1,0 +1,8 @@
+.scrollable-table {
+  overflow-y: scroll;
+  height: 100px;
+  display: block;
+}
+.scrollable-table-parent {
+  overflow: hidden;
+}

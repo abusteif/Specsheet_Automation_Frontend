@@ -12,7 +12,9 @@ const FileDropZone = (props) => {
 
   useEffect(() => {
     if (fileType !== props.requiredFileType) {
-      setDropZoneText("Incorrect file type. Only .txt files are allowed");
+      setDropZoneText(
+        `Incorrect file type. Only ${props.requiredFileType} files are allowed`
+      );
     }
     if (uploadStatus === true) setDropZoneText("File uploaded successfully.");
     if (!props.uploadStatus) setDropZoneText("");
@@ -41,7 +43,6 @@ const FileDropZone = (props) => {
     },
     [messageType]
   );
-
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
