@@ -42,11 +42,11 @@ import { allRatSIMItems } from "../configs/configurations";
 
 const AutomationScreen = (props) => {
   useEffect(() => {
-    if (props.automation.projectId) {
-      props.getDevices(props.automation.projectId);
-    } else {
-      props.getProjectId(projectKey, "automation");
-    }
+    // if (props.automation.projectId) {
+    //   props.getDevices(props.automation.projectId);
+    // } else {
+    //   props.getProjectId(projectKey, "automation");
+    // }
     return () => {
       props.resetHexData();
       props.resetValidationResult();
@@ -59,51 +59,52 @@ const AutomationScreen = (props) => {
       subMessage={
         !props.common.status && apiErrorMessage + props.common.errorMessage
       }
-      loadingOverlayActive={!props.automation.projectId}
     >
-      <DeviceSelectionSection
-        disableAll={
-          props.automation.specsheet.isGenerateStarted ||
-          props.automation.specsheet.isUploadStarted
-        }
-        devices={props.common.devices}
-        deviceText="Select DUT"
-        onSelectDevice={(selectedDevice) => {
-          props.resetAllIotCycles();
-          props.resetHexData();
-          props.resetRATSIM();
-          props.resetSpecsheetUpload();
-          props.resetSpecsheetGenerate();
-          props.getIotCycles(selectedDevice, props.automation.projectId);
-
-          props.selectDevice(selectedDevice);
-          props.resetSelectedIotCycle();
-        }}
-        selectedDevice={props.common.selectedDevice}
-        iotCycles={props.common.iotCycles}
-        iotCycleText="Select IOT Cycle"
-        onSelectIotCycle={(selectIotCycle) => {
-          props.selectIotCycle(selectIotCycle);
-          props.resetHexData();
-          props.resetRATSIM();
-          props.resetSpecsheetUpload();
-          props.resetSpecsheetGenerate();
-        }}
-        resetSelectedIotCycle={
-          Object.keys(props.common.selectedIotCycle).length === 0
-        }
-        selectedIotCycle={props.common.selectedIotCycle}
-        allRatSIMItems={allRatSIMItems}
-        messageTypeText="Select RAT and SIM"
-        onSelectMessagetType={(type) => {
-          props.selectRATSIM(type);
-          props.resetHexData();
-          props.resetSpecsheetUpload();
-          props.resetSpecsheetGenerate();
-        }}
-        selectedRATSIM={props.automation.selectedRATSIM}
-        resetRATSIM={props.automation.selectedRATSIM ? false : true}
-      />
+      {
+        //   <DeviceSelectionSection
+        //   disableAll={
+        //     props.automation.specsheet.isGenerateStarted ||
+        //     props.automation.specsheet.isUploadStarted
+        //   }
+        //   devices={props.common.devices}
+        //   deviceText="Select DUT"
+        //   onSelectDevice={(selectedDevice) => {
+        //     props.resetAllIotCycles();
+        //     props.resetHexData();
+        //     props.resetRATSIM();
+        //     props.resetSpecsheetUpload();
+        //     props.resetSpecsheetGenerate();
+        //     props.getIotCycles(selectedDevice, props.automation.projectId);
+        //
+        //     props.selectDevice(selectedDevice);
+        //     props.resetSelectedIotCycle();
+        //   }}
+        //   selectedDevice={props.common.selectedDevice}
+        //   iotCycles={props.common.iotCycles}
+        //   iotCycleText="Select IOT Cycle"
+        //   onSelectIotCycle={(selectIotCycle) => {
+        //     props.selectIotCycle(selectIotCycle);
+        //     props.resetHexData();
+        //     props.resetRATSIM();
+        //     props.resetSpecsheetUpload();
+        //     props.resetSpecsheetGenerate();
+        //   }}
+        //   resetSelectedIotCycle={
+        //     Object.keys(props.common.selectedIotCycle).length === 0
+        //   }
+        //   selectedIotCycle={props.common.selectedIotCycle}
+        //   allRatSIMItems={allRatSIMItems}
+        //   messageTypeText="Select RAT and SIM"
+        //   onSelectMessagetType={(type) => {
+        //     props.selectRATSIM(type);
+        //     props.resetHexData();
+        //     props.resetSpecsheetUpload();
+        //     props.resetSpecsheetGenerate();
+        //   }}
+        //   selectedRATSIM={props.automation.selectedRATSIM}
+        //   resetRATSIM={props.automation.selectedRATSIM ? false : true}
+        // />
+      }
       <UploadSection
         selectedDevice={props.common.selectedDevice}
         selectedIotCycle={props.common.selectedIotCycle}

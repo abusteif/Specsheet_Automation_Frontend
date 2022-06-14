@@ -30,7 +30,7 @@ const defaultHex = {
 
 const defaultState = {
   projectId: "",
-  selectedRATSIM: null,
+  selectedRATSIM: "pSIM",
   hexData: {
     UECapabilityInformation_4G: { ...defaultHex },
     UECapabilityInformation_5G: { ...defaultHex },
