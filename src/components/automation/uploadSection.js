@@ -230,33 +230,35 @@ const UploadSection = ({
   return (
     <div className="upload-section">
       <div className="upload-section-header">
-        <UploadSectionHeader
-          selectedDevice={selectedDevice}
-          selectedIotCycle={selectedIotCycle}
-          selectedRATSIM={
-            selectedRATSIM
-              ? _.filter(allRatSIMItems, {
-                  value: selectedRATSIM,
-                })[0].name
-              : ""
-          }
-        />
-
-        <div
-          className="border-shadow-bottom"
-          style={{
-            marginTop: "20px",
-            alignSelf: "center",
-            width: "70%",
-          }}
-        />
+        {
+          //   <UploadSectionHeader
+          //   selectedDevice={selectedDevice}
+          //   selectedIotCycle={selectedIotCycle}
+          //   selectedRATSIM={
+          //     selectedRATSIM
+          //       ? _.filter(allRatSIMItems, {
+          //           value: selectedRATSIM,
+          //         })[0].name
+          //       : ""
+          //   }
+          // />
+          //
+          // <div
+          //   className="border-shadow-bottom"
+          //   style={{
+          //     marginTop: "20px",
+          //     alignSelf: "center",
+          //     width: "70%",
+          //   }}
+          // />
+        }
       </div>
       {
         <div className="upload-section-body">
-          {selectedDevice.id &&
-          selectedIotCycle.id &&
-          selectedRATSIM &&
-          selectedRATSIM !== "5G" ? (
+          {
+            //   selectedDevice.id &&
+            // selectedIotCycle.id &&
+            // selectedRATSIM && selectedRATSIM !== "5G" ? (
             <>
               <HexCodeInput
                 role="attachRequest"
@@ -470,15 +472,18 @@ const UploadSection = ({
                 ]}
               />
             </>
-          ) : (
-            selectedDevice.id &&
-            selectedIotCycle.id &&
-            selectedRATSIM && (
-              <span style={{ fontSize: 20, color: "red", fontStyle: "italic" }}>
-                {`Sorry ${selectedRATSIM} message type is not supported yet.`}
-              </span>
-            )
-          )}
+            // ) : (
+            //   selectedDevice.id &&
+            //   selectedIotCycle.id &&
+            //   selectedRATSIM && (
+            //     <span
+            //       style={{ fontSize: 20, color: "red", fontStyle: "italic" }}
+            //     >
+            //       {`Sorry ${selectedRATSIM} message type is not supported yet.`}
+            //     </span>
+            //   )
+            // )
+          }
         </div>
       }
     </div>
